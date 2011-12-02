@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Mar 30, 2007            Adrastea / (Jupiter)                      515
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  10 +- 10       Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =   0.05-0.10
+                                            V(1,0)              = +12.4 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 128.98 (10^3)   Orbital period      = 0.29826 d
+  Eccentricity, e         =  ~ 0            Rotational period   = Synchronous 
+  Inclination, i  (deg)   =  ~ 0 
+*******************************************************************************

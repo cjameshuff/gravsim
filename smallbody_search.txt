@@ -1,0 +1,85 @@
+*******************************************************************************
+   Search for small-bodies with following keywords (R=real, I=integer, C=char).
+Use comparisons from the set { <, >, <>, = }. Separate each field with a semi-
+colon. Example search formulation:
+ 
+                   A < 2.5; IN > 7.8; STYP = S; GM <> 0;
+
+The first group of keywords are common to asteroids AND comets: 
+
+ Type     Keyword     Description
+ ----     -------     -----------
+  C       NAME ...... Asteroid OR comet name fragment
+  C       DES ....... Object designation
+  R       EPOCH ..... Julian Date of osculating elements
+  R       CALEPO .... Calendar date of osc. elements; YYYYMMDD.ffff
+  R       A ......... Semi-major axis (AU)
+  R       EC ........ Eccentricity
+  R       IN ........ Inclination of orbit plane (DEG) wrt ecliptic
+  R       OM ........ Longitude of Ascending Node (DEG) wrt ecliptic/equinox
+  R       W ......... Argument of Perihelion (DEG) wrt ecliptic/equinox
+  R       TP ........ Perihelion Julian Date
+  R       CALTP ..... Perihelion calendar date; YYYYMMDD.ffff
+  R       MA ........ Mean anomaly (DEG) 
+  R       PER ....... Orbital period (YRS)
+  R       RAD ....... Object radius (KM)
+  R       GM ........ Object GM (KM^3/S^2), only a few are known
+  R       QR ........ Perihelion distance (AU)
+  R       ADIST ..... Aphelion distance (AU)
+  R       ANGMOM .... Specific angular momentum (AU^2/DAY)
+  R       N ......... Mean motion (DEG/DAY)
+  R       DAN ....... Heliocentric dist. (AU) of ascending node
+  R       DDN ....... Heliocentric dist. (AU) of descending node
+  R       L ......... Ecliptic longitude of perihelion (DEG)
+  R       B ......... Ecliptic latitude of perihelion (DEG)
+  I       NOBS ...... Number of astrometric determinations in solution
+
+The next parameters are ASTEROID SPECIFIC. If one or more is used, the search
+will conclude faster by examining asteroids only. For example, including
+something like 'H > -10;' will limit the search to asteroids only:
+
+  C       ASTNAM .... Asteroid name fragment (designation if unnamed)
+  R       B-V ....... B-V color (asteroid)
+  R       H ......... Absolute magnitude parameter (asteroid)
+  R       G ......... Magnitude slope parameter; can be < 0 (asteroid)
+  R       ROTPER .... Rotational period, hrs (asteroid)
+  R       ALBEDO .... Geometric albedo (asteroid)
+  C       STYP ...... Spectral type, Tholen scheme (asteroid)
+
+The next parameters are COMET SPECIFIC. If one or more is used, the search
+will conclude faster by examining comets only. For example, including something
+like "M1 > -10;' will limit the search to comets only:
+
+  C       COMNAM .... Comet name fragment (designation if unnamed)
+  I       COMNUM .... Comet number 
+  R       M1 ........ Total absolute magnitude (comet)
+  R       M2 ........ Nuclear absolute magnitude (comet)
+  R       K1 ........ Total magnitude scaling factor (comet)
+  R       K2 ........ Nuclear magnitude scaling factor (comet)
+  R       PHCOF ..... Phase coefficient for k2=5 (comet)
+  R       A1 ........ Radial non-grav accel (comet), 10^-8 AU/DAY^2
+  R       A2 ........ Transverse non-grav accel (comet), 10^-8 AU/DAY^2
+  R       A3 ........ Normal non-grav accel (comet), AU/d^2
+  R       DT ........ Non-grav lag/delay parameter (comet), days.
+
+  Only 1 of the 4 keywords 'ASTNAM', 'COMNAM', 'NAME', or 'DES' may 
+be specified on a given search.
+
+Directives:
+-----------
+
+There are 3 directives that may be used to limit or control searches: 
+
+     Directive  Description
+     ---------  -----------
+     COM .....  Limit search to comets only
+     AST .....  Limit search to asteroids only
+     LIST ....  Display parameter values for matched objects. (This may be 
+                set as a default for all subsequent searches by typing "LIST" 
+                at the main system prompt, "Horizons>".)
+
+For example,    
+
+    "A < 2.5; IN > 10; AST;"        match parameters against asteroids ONLY.    
+    "A < 2.5; IN > 10; AST; LIST;"  match AND display values of the parameters.
+*******************************************************************************

@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Apr 11, 2008             Galatea / (Neptune)                      806
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  79 +- 12       Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.06 
+                                            V(1,0)              = +7.6 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 61.953(10^3)    Orbital period      = 0.428745 d
+  Eccentricity, e         = 0.0             Rotational period   = 
+  Inclination, i  (deg)   = 0.05
+*******************************************************************************

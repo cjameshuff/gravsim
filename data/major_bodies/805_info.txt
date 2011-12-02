@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Apr 11, 2008             Despina / (Neptune)                      805
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  74 +- 10       Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.06 
+                                            V(1,0)              = +7.9 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 52.526(10^3)    Orbital period      = 0.334655 d
+  Eccentricity, e         = 0.0             Rotational period   = 
+  Inclination, i  (deg)   = 0.07
+*******************************************************************************

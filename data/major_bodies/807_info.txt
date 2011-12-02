@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Apr 11, 2008            Larissa  / (Neptune)                      807
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  104 x 89 (+-7) Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.06 
+                                            V(1,0)              = +7.3 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 73.548(10^3)    Orbital period      = 0.554654 d
+  Eccentricity, e         = 0.0             Rotational period   = 
+  Inclination, i  (deg)   = 0.20
+*******************************************************************************

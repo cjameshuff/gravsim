@@ -1,0 +1,18 @@
+*******************************************************************************
+ Revised: Mar 27, 2009             Neried / (Neptune)                       802
+
+            http://ssd.jpl.nasa.gov/sat_props.html  (physical properties)
+            http://ssd.jpl.nasa.gov/sat_elem.html   (mean elements)
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  170   +- 2.5   Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.2  
+                                            V(1,0)              = +4.0 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 5513.4(10^3)    Orbital period      = 360.13619 d
+  Eccentricity, e         = 0.7512          Rotational period   = 
+  Inclination, i  (deg)   = 7.23            Local invar ref. pln= Sun   
+  
+ Fit to all reported measurements through 2008, as described in AJ (2009).
+*******************************************************************************

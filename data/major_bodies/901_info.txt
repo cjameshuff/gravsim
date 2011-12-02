@@ -1,0 +1,15 @@
+*******************************************************************************
+ Revised: Aug 15, 2011          Charon / (Pluto)                            901 
+
+ Fit to all available observations.
+
+ SATELLITE GENERAL PHYSICAL PROPERTIES:
+  Radius (km)             = 593 +- 13 km    Density (g cm^-3)  =  1.853 +- .158
+  Mass (10^21 kg )        =   1.90 +- 0.04  Geometric Albedo   =  0.372 +- .012
+  Surface gravity (cm/s^2)=  21.3           Hill's Sphere, km  =  5800
+  Escape velocity, km/s   =   0.58
+
+ GENERIC SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) =  19.410(10^3)   Orbital period, days= 6.38723 
+  Eccentricity, e         =   0.0002        Rotational period   = 
+*******************************************************************************

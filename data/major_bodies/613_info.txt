@@ -1,0 +1,19 @@
+*******************************************************************************
+ Revised: Aug 17, 2009              Telesto  / (Saturn)                     613
+                           http://ssd.jpl.nasa.gov/?sat_phys_par
+                             http://ssd.jpl.nasa.gov/?sat_elem
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             = 15 x 12.5 x 7.5 Density (g cm^-3)   =  1.0
+  Mass (10^22 g)          = 0.0007194       Geometric Albedo    =  1.0  
+  GM (km^3/s^2)           = 0.00048         V(1,0)              = +9.1 
+
+ SATELLITE ORBITAL DATA (mean values with respect to local Laplace plane):
+  Semi-major axis, a (km) = 294.710(10^3)   Orbital period      = 1.887802 d
+  Eccentricity, e         = 0.0002          Rotational period   = 
+  Inclination, i  (deg)   = 1.180   
+
+ NOTE: The IAU rotational spin-pole model (defining latitude and logitude) is 
+       valid only near the time of the 1981 Voyager flybys; an updated
+       Cassini-based coordinate grid model is not yet published by the IAU.
+*******************************************************************************

@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Mar 18, 2011            Atlas  / (Saturn)                         615
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)            = 18.5x17.2x13.5   Density (g cm^-3)   = 
+  Mass (10^20 kg )       =                  Geometric Albedo    =  0.5
+                                            V(1,0)              = +9.5 
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 137.64 (10^3)   Orbital period      = 0.6019 d
+  Eccentricity, e         = ~0              Rotational period   = 
+  Inclination, i  (deg)   = ~0      
+*******************************************************************************

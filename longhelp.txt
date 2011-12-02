@@ -1,0 +1,2912 @@
+ Introduction                    Version 3.36                      Feb 16, 2011 
+                ftp://ssd.jpl.nasa.gov/pub/ssd/Horizons_doc.pdf
+
+  PURPOSE:
+
+   The JPL Horizons On-Line Ephemeris System provides easy access to key solar
+system data and flexible production of highly accurate ephemerides for solar
+system objects. This includes 536,000+ asteroids, 3000 comets, 170 natural
+satellites, all planets, the Sun, 60+ spacecraft, and several dynamical points
+such as Earth-Sun L1, L2, L4, L5, and system barycenters. Users may also define 
+their own objects, then use the system to integrate the trajectory, or conduct 
+parameter searches of the comet/asteroid database, searching on combinations of 
+up to 42 different parameters. Rise, transit and set may be identified to the 
+nearest minute. Close-approaches by asteroids and comets to planetary bodies 
+(and Ceres, Pallas, and Vesta) can be rapidly identified along with the 
+encounter uncertainties and impact probabilities. Orbit uncertainties can be 
+computed for asteroids and comets.
+
+   More than 100 different observational and physical aspect quantities can be
+requested at intervals for both topocentric and geocentric situations in one
+of 9 coordinate systems and 4 time scales (CT, TT, UT, Civil). Over 1500 Earth
+station locations are on file, along with several on other major bodies, in 
+addition to spacecraft "observer sites". Users may search for or define 
+topocentric site coordinates on any planet or natural satellite (with known 
+rotational model), if the desired site is not predefined.  Output is suitable 
+for observers, mission planners and other researchers, although this 
+determination is ultimately the users' responsibility.
+
+   Five types of customizable output can be requested:
+ 
+       1) Observables (RA/DEC, Az/El, physical aspect, angles, etc.)
+       2) Osculating elements
+       3) Cartesian state vectors
+       4) Close approaches to planets (and Ceres, Pallas, and Vesta)
+       5) SPK binaries (asteroids and comets only)
+
+   The first four are ASCII tables. Output is returned to the user via e-mail,
+FTP or Kermit protocols. Table output can be requested in a format suitable for
+spreadsheet import. SPK file output allows user programs to reproduce the
+integrated target state at any instant. The SPK files can be used by existing 
+visualization, animation and mission-design software.
+
+   The underlying planet/satellite ephemerides and small-body osculating
+elements are the same ones used at JPL for radar astronomy, mission planning 
+and spacecraft navigation.
+
+  OVERVIEW OF USAGE:
+
+   There are three different ways to access the program:
+
+   A) Telnet (full access, active interactive prompt-based interface):
+        1)  Telnet directly to the system (telnet ssd.jpl.nasa.gov 6775). 
+            No account or password is required.
+        2)  Specify an object to get a summary data screen. 
+        3)  Follow prompts. At any prompt, type ? or ?! for short or long 
+            explanations
+        4)  Transmit results to your system by e-mail, FTP or Kermit
+
+   B) E-mail (full access, except for SPK file production, batch interface):
+        1) Send e-mail to "horizons@ssd.jpl.nasa.gov" w/subject "BATCH-LONG".
+        2) An example command file will be mailed back to you.
+        3) Edit this text file, then mail it back with the subject header "JOB"
+        4) Results of your request are mailed back to you.
+
+   C) Web (partial access, passive interactive GUI interface):
+        Point your browser to http://ssd.jpl.nasa.gov/horizons.html
+
+   The Horizons system was intended to be easy to use and should have a 
+step-function learning curve. The remainder of this documentation summarizes 
+system capabilities, but is not necessary for successful use.  
+
+   While using the telnet system, type "?" or "?!" at any prompt for an 
+explanation of options. See "Acknowledgements" section for contact information.
+
+===============================================================================
+                         CONNECTING TO THE SYSTEM   
+
+TELNET:
+
+   The Horizons on-line ephemeris and data system is available as a telnet 
+service. This is suitable for people who want full access to all program 
+features in an interactive prompt-based way. From a telnet-capable machine,
+running a "VT100" type terminal emulation, telnet to "ssd.jpl.nasa.gov 6775":  
+
+From UNIX command line:
+
+    telnet ssd.jpl.nasa.gov 6775
+
+... where 6775 is a port number. Alternatively, from within a web-browser, 
+enter the URL:
+  
+    telnet://ssd.jpl.nasa.gov:6775". 
+
+   The system will start a terminal session automatically. No user-ID or 
+password is required.  If your connection is refused, there are two possible
+causes:
+
+    A. The port number wasn't specified or passed along. A few PC-type telnet 
+        programs do not to fully implement the telnet protocol and may not 
+        pass the port number to the network, or may need to be reconfigured
+        to function properly or may have a different syntax for specifying port
+        numbers. Consult your user's guide for information.
+
+    B. Firewall/security restriction at your end. Please contact your local 
+        computer system administrator in this case. Since no password or 
+        security information is exchanged, you may be able to request a
+        firewall exception from your institution.
+
+   Once you connect, the system will attempt to determine your window size. If 
+it cannot, it will default to a 24 row by 79 column screen display. If this is 
+inappropriate, and your display paging is choppy, manually set your screen size 
+by using the command "TTY {rows} {columns}", where {rows} and {columns} are 
+replaced by appropriate integers. 
+
+   Window sizes less than 79 columns aren't recommended since data-screen 
+displays are formatted with that minimum size in mind and will be difficult to 
+read on something smaller. 
+
+   Access may be automated. Example scripts may be found in the anonymous FTP 
+directory "ftp://ssd.jpl.nasa.gov/pub/ssd", and include "smb_spk", "obs_tbl" 
+(with sample input file "obs_tbl.inp"), and "osc_tbl" (with sample input file 
+"osc_tbl.inp").
+
+WEB:
+
+   Point your browser to http://ssd.jpl.nasa.gov/horizons.html. This graphical 
+interface is intended for the more casual user or general public and now offers 
+access to most (but not all) program features using pull-down menus, fill-in 
+boxes and buttons to click. Verify default settings for time and coordinate 
+systems are as intended for the run.
+
+E-MAIL:
+
+   The program can also be controlled by sending e-mail messages to the address
+"horizons@ssd.jpl.nasa.gov". Response is determined by the subject of the 
+message. This option is for those who want access to most program features 
+without the overhead of answering prompts or manipulating graphical interfaces;
+generally those already familiar with what the program does and who know what 
+they want.  It has the additional capability of allowing users to specify up to 
+10000 discrete times (to aid astrometric reduction) and up to 200 objects at 
+once. It does not allow SPK file production available via telnet.
+
+   To get started, send e-mail to the above address with the subject
+"BATCH-LONG". The latest, fully-commented example run-stream will be
+mailed back. Edit this file to produce the results you want, then mail back
+with the subject "JOB". Acceptable e-mail subject commands are:
+
+    SUBJECT HEADER  MEANING
+    --------------  -----------------------------------------------------------
+    JOB             Horizons run-stream
+    DOC-TEXT        Request ASCII (plain-text) version of current documentation
+    DOC-PS          Request PostScript version of current documentation
+    BATCH-LONG      Request latest fully commented example batch file
+    BATCH-BRIEF     Request latest example batch file without comments
+    QUESTION        Message forwarded to cognizant engineer
+
+===============================================================================
+                            GENERAL DEFINITIONS
+
+  The remainder of this document uses these abbreviations and terms. 
+Understanding their meaning will help you properly interpret program
+documentation and output.
+ 
+RA 
+   Right ascension; the angular distance on the celestial sphere eastward along 
+the celestial equator from the reference equinox to the meridian of the object.
+RA is analogous to longitude, with the plane containing the equinox defining 
+zero RA much as the Greenwich meridian defines zero longitude.  Expressed in 
+units of hours, minutes and seconds or degrees, as requested.
+ 
+DEC
+    Declination; the angular distance on the celestial sphere north (positive) 
+or south (negative) of the celestial equator. It is analogous to latitude. 
+Usually expressed in degrees.
+ 
+AZ
+   Azimuth; the angle measured eastward along the "horizon" (the plane 
+perpendicular to the local zenith) from the North to the point where the 
+meridian passing through local zenith and the object intersects the horizon 
+plane.
+ 
+EL
+   Elevation; the angular distance above or below the plane perpendicular to 
+the local zenith. Note this plane is not necessarily the visible horizon, due 
+to station elevation ("horizon dip" effect).
+
+Geometric coordinates
+   Referred to the mean equator and equinox of a particular reference frame
+(ICRF or FK4/B1950.0). Geometric coordinates are the true, or instantaneous 
+states of a body at a particular ephemeris time.
+
+Astrometric coordinates
+   Accounts for the finite but varying amount of time it takes light to 
+travel from the target to the observer and is expressed with respect to the 
+mean equator and equinox of a particular reference frame (ICRF or FK4/B1950.0).
+
+Apparent coordinates
+   Takes into account factors which appear to change target position with 
+respect to the background stars and inertial coordinate system: light-time, 
+stellar aberration, the relativistic deflection of light. Usually, a final 
+rotation to some "of-date" coordinate system is performed, such as 
+precession-nutation to the Earth's true-equator and equinox-of-date. 
+
+Refracted coordinates
+   Apparent coordinates approximately corrected for atmospheric refraction.
+Available only for Earth-based sites.
+ 
+Small body
+   Refers to a comet or asteroid for which the trajectory is integrated from 
+orbital elements. Typically no cartographic coordinate system is available, 
+with the exceptions, so far, being Gaspra and Ida.
+ 
+Major body
+   Refers to a planet, natural satellite, spacecraft or the Sun.  
+Only major bodies can be coordinate centers (observing sites). In special 
+cases, a comet or asteroid can be redefined as a "major body", such as a
+spacecraft encounter, where it is desirable to generate an ephemeris of 
+the approaching spacecraft as seen from the target.  State vectors are 
+interpolated from previously defined ephemerides, such as DE-405, which 
+are stored as Chebyshev coefficients. Interpolation recovers the state 
+the mm level.
+ 
+Target body
+   Refers to the object of interest, selected by the user. It can be a 
+major-body or small-body.
+ 
+Primary body
+   Refers to closest body about which a target body orbits.  For natural 
+satellites, this would be a planet, although they orbit the Sun as well. For 
+planets and small-bodies, the primary body is the Sun.
+ 
+===============================================================================
+                               OBJECT SELECTION
+
+After connecting by telnet, the primary thing one has to learn to to use 
+Horizons effectively is how to select objects. You will be prompted for
+everything else. 
+
+  There are two categories of objects to select:
+
+     1. MAJOR BODIES ... defined as planets, natural satellites, spacecraft,
+                          and "special cases"
+
+     2. SMALL BODIES ... comets and asteroids.  
+
+  This division is a result of the objects being stored differently as far
+as the system is concerned. Major bodies are represented in pre-computed
+trajectory files which are interpolated very accurately to retrieve position 
+and velocity at any instant.  Small-bodies have their position and velocity 
+at one instant compactly stored in a database and are then numerically 
+integrated "on-the-fly" by Horizons to other times of interest (also very 
+accurately), using all known physics.
+
+  When an object is specified, the request is first examined for "keywords" 
+that tell the system more about what is wanted. If there aren't any keywords, 
+the system will then try to match against the major body list. If no match
+is found among the major bodies, it will then match against the small-body 
+database.
+
+  For example, if you simply input "Io", it will return a list of matches from
+among the major bodies, including the moon of Jupiter, and then stop, waiting
+for a unique specification that matches just one object. To uniquely specify
+Io, enter it's IAU number, "501", which was displayed on the previous list
+of multiple matches. 
+
+  To instead select the small-body named Io, provide more information by 
+specifying it one of these ways: 
+  
+   Horizons> Io;        (semi-colon tells Horizons its a small-body look-up) 
+   Horizons> 85         (no match on major body [at least right now], so 
+                         search "falls through" to small-body number look-up)
+   Horizons> 85;        (semi-colon tells Horizons its a small-body look-up)
+   Horizons> NAME= Io   (Keyword "NAME" tells Horizons its an asteroid or 
+                         comet small-body look-up)
+   Horizons> ASTNAM= Io (Keyword "ASTNAM" tells Horizons its an asteroid 
+                         name)
+
+  Further details, discussion, and examples follow.
+
+
+MAJOR BODIES
+~~~~~~~~~~~~
+  Type 'MB' to get a list of all major-body strings that can be used to search
+on.  To select a major body, enter one of the following:
+
+     (1)  A string to search on ("Mars" or "Trit"). Case insensitive.
+     (2)  A JPL ID integer code or fragment
+     (3)  An IAU code 
+
+Examples (at the main prompt):
+
+     Horizons> mars bary (uniquely select Mars center; '4' does the same)
+     Horizons> mars      (list all major bodies with 'mars' in an ID field)
+     Horizons> 501       (uniquely select Io)
+     Horizons> N*        (list all major bodies with 'n' in an ID field)
+
+  Major planets may have two integer ID's assigned. Those >100, ending in 
+99 (such as 199, 299, 399, etc.) refer to planet CENTERS. To select planet 
+SYSTEM BARYCENTERS, use the codes less than 10 (1, 2, 3). For example, "399"
+is the Earth's center, '3' is the Earth-Moon Barycenter and "301" is the 
+center of the Moon. For Mercury, Venus and Mars, there is no significant 
+difference between planet-center and system barycenter (1=199, 2=299, 4=499,
+as far as Horizons selection is concerned).
+
+  If a planet name is entered, it may not be considered unique if a distinct
+system barycenter is present. For example, if "Saturn" is entered, a list
+containing "Saturn" and the "Saturn Barycenter" will be returned. To specify 
+Saturn (the planet-center), you must use its unique ID code, "699". 
+
+  System barycenters are available over longer time-spans than planet-centers 
+because planet-centers are defined by satellite solutions. These satellite 
+solutions are based on shorter data arcs than the entire system and can 
+therefore be extrapolated only over shorter time-spans. For example, the
+planet Jupiter (599) might be available over the interval 1600-2500, while 
+the Jupiter system barycenter (5) is available over 3000 B.C. to A.D. 3000.
+
+
+SMALL BODIES
+~~~~~~~~~~~~
+  To select an asteroid or comet, enter a list of parameters to search on
+SEPARATED BY A SEMI-COLON (;).  TYPE 'SB' FOR LIST OF 42 FIELD KEYWORDS THAT 
+CAN BE MATCHED, or see list later in this document. Match symbols are from the 
+set { >, <, <>, = }. 
+
+  For example,  "A < 2.5; IN > 7.8; STYP = S, GM <> 0; " searches for all 
+S-type small-bodies with semi-major axis less than 2.5 AU and inclination 
+greater than 7.8 degrees with a known (non-zero) GM. Spaces in the command are
+not considered, nor are upper/lower-case distinctions.
+
+  Exceptions are object names and designations. Name searches consider spaces.
+Designation searches consider spaces AND upper/lower-case. If you want to match
+a fragment of a name or designation, end it with a '*' (e.g. DES = 1993*;). 
+Otherwise, it is assumed a complete name or designation is specified and the
+search must match exactly and completely. 
+
+  For example:
+ 
+        NAME = CERES;    (matches only if object name is "Ceres")
+        NAME = CER*;     (match "Ceres", "Lucerna", "Cicero", etc.) 
+
+  The same keyword can be used more than once in a search command. For example,
+"IN >10; IN < 20;" will list those objects possessing an inclination between
+10 and 20 degrees. If the directive "LIST;" is in the search request, the 
+matched parameters will be displayed. For example, "IN > 150; LIST" will 
+display the inclination of each object with inclination greater than 150
+degrees.
+
+  Once a small-body is uniquely identified, a screen of data will be displayed.
+If more than one small-body matches given parameters, a list of matching 
+objects is displayed.  Individual objects from the matched list can then be 
+requested by giving the displayed "record number", followed by a semi-colon.
+
+  The semi-colon is used to indicate a small-body request and resolve
+number ambiguities. For example, entering '1' will select Mercury Barycenter.  
+Enter '1;' to retrieve the small-body in record #1 (Ceres).
+
+  Osculating elements for more than one comet apparition may be listed 
+("apparition" refers to a particular perihelion passage), since out-gassing 
+near perihelion can alter the orbit for each passage.  Select an apparition 
+from the list with the closest epoch prior to the date of interest for the 
+ephemeris, or add the "CAP" directive to the search to  automatically select 
+the closest apparition of interest:
+
+     CAP;         (return last apparition before current date)
+     CAP < JD#;   (return last apparition before specified Julian Day Number)
+     CAP < YEAR;  (return last apparition before given integer year)
+
+   If the number after a '<' is less than 10000, it is assumed to be a year 
+integer.  Otherwise, the number is taken to be a Julian Day Number. If "CAP;"
+is specified, the search is automatically recognized as being a comets-only 
+search.
+
+  The record (or file) number of unnumbered asteroids and comet apparitions 
+should NOT be considered constants; they WILL change as the database is updated.
+ 
+  To enter your own heliocentric ecliptic elements, type ";". This capability
+is described in more detail in a later section.
+
+  Example queries follow. Where more than one example is given, the first
+is most likely to complete as intended.  For example, "ASTNAM = Vesta;"
+will always return the asteroid while, if you use the convenient form "Vesta", 
+it's possible that a future natural satellite name will someday include that 
+string and there will no longer be a unique match. A good habit might be
+to include at least one semi-colon in all small-body searches to be clear 
+when you are looking for a comet or asteroid.
+
+ Search for objects matching a set of parameters:
+   Horizons> A < 2.5; IN > 7.8; STYP = S; GM <> 0;       (asteroid & comets)
+   Horizons> A < 2.5; IN > 7.8; STYP = S; GM <> 0; AST;  (asteroids only)
+   Horizons> A < 2.5; IN > 7.8; STYP = S; GM <> 0; COM;  (comets only)
+
+ Match by name:
+   Horizons> ASTNAM= Vesta;
+   Horizons> Vesta;
+   Horizons> Vesta
+
+ Match by name fragment:
+   Horizons> NAME= all*;
+   Horizons> all*;
+ 
+ "Wildcard" match designation:
+   Horizons> DES = 1993*; (Objects with designations containing 1993)
+   Horizons> 1993*;
+   Horizons> 1993*
+
+  NOTE: The '*' must be at the end. It toggles searches on sub-strings of
+        characters and is not a true positional wildcard. For example,
+        '19*3;' is not a recognized search.
+
+ Match exact designation:
+   Horizons> DES= 1990 MU;
+   Horizons> 1990 MU;
+   Horizons> 1990 MU
+
+ Select numbered asteroid:
+   Horizons> 1;                    (Object in database record #1 ["1 Ceres"])
+
+ Define an arbitrary object not in database
+   Horizons> ;            
+
+ Comet searches:
+   Horizons> COMNAM= HER*;         (Comet names (only) containing "her")
+   Horizons> DES= 73P;             (Request comet 73P apparitions, including
+                                    fragments, if any)
+   Horizons> DES= 73P; NOFRAG      (Request apparitions of comet 73P,
+                                    excluding fragments)   
+   Horizons> DES= 73P; CAP         (Request comet 73P apparition solution
+                                    closest to present date, including any 
+                                    fragments)
+   Horizons> DES= 73P; NOFRAG; CAP (Request comet 73P apparition solution 
+                                    closest to present date, excluding any 
+                                    fragments)
+   Horizons> COM; NOFRAG; CAP      (List the apparition solutions closest to
+                                    to the present date for all comets, 
+                                    excluding fragments)
+   Horizons> NAME=Halley;CAP<1690; (Request last Halley apparition prior to 
+                                     the year 1690)
+
+===============================================================================
+
+                   COORDINATE CENTER (OBSERVING SITE) SELECTION
+
+While osculating element tables may be generated with respect to a major body
+center only, vector and observer tables may produce output with respect to an
+arbitrary observing site, defined with respect to a major body center.
+
+EARTH SITES
+-----------
+
+  For the Earth, a list of 1500+ sites is predefined. The list generally matches
+that of the Minor Planet Center while expanding on radar sites (which have 
+negative ID numbers on this system) as necessary. Station "500" is the geocenter.
+
+NON-EARTH SITES
+---------------
+
+  For non-Earth major bodies, station 500 also represents the body center.
+For those major bodies with IAU rotational models, additional topocentric sites
+may be defined. Spacecraft landing sites are typically predefined on non-Earth
+bodies.
+
+USING A PREDEFINED SITE
+-----------------------
+ 
+  There are several equivalent ways of specifying a location. The most 
+general form is ...
+
+                                 site @ body 
+
+  ... where "site" is a numeric code or name fragment to match, and "body" is
+a numeric major body code or name fragment to match. A list of such major body
+codes follows later in this document. 
+
+  Here are four equivalent ways of searching for the same Earth location:
+
+     Code         Meaning
+     -----------  -------------------------------------------------------------
+     675@399      Site #675 on Earth (Palomar Mountain)
+     palomar@399         "
+     675@                "
+     Palomar             "           (observer table only)
+
+OBSERVER & VECTOR TABLES:
+  If an observer or vector table has been requested, the "@" symbol may be 
+dropped; the Earth will be assumed if an integer like "675" or a name 
+fragment like "Palom" is input. However, if you are trying to specify an 
+observing site not on Earth, you MUST use the "@" symbol for correct 
+interpretation. For example, if an observer table as seen from the Sun is
+desired, it must be specified as "@10" or "@sun". Specifying "10" only will
+select the Caussols site.
+
+ELEMENT TABLES:
+  For an osculating element table, the DIFFERENT assumption is made that a 
+coordinate center request lacking a "@" symbol is a major body. For example,
+'10' would mean the Caussols site for an observer or vector table, but 
+"Sun" for a vector table.  '10@' or '10@399' would mean the Caussols site 
+for both table types. 
+
+    The different assumptions are meant to be efficient for the particular 
+types of output requested, expediting "typical" usage. However, the full form
+"site @ body" can always be used to avoid having to remember "quirks".
+
+    If your specification returns more than one possible match, the list of 
+matched sites is returned. Refine your site request to be more specific, by 
+using the numeric codes listed, for example, and try again. 
+
+    While one can spell out the names of the bodies and sites, it is possible 
+unique matches won't be returned. Thus, use the unique ID numbers when known.  
+For example, "675@Earth" will first look for the body, match both the Earth & 
+Earth-Moon barycenter, thus have to quit before finding specific Palomar site 
+coordinates. "675@399" is unique and avoids this problem. Spaces & upper/lower 
+case are ignored.
+
+    Here are examples for sites on bodies other than the Earth:
+
+     Code         Meaning
+     ------------ -------------------------------------------------------------
+     Viking@499   List all defined Viking lander sites on Mars
+     Viking 1@499 Select Viking 1 landing site on Mars
+     1 @301       Site #1 on the Moon
+     500 @ 501    Io body center
+     3 @ 499      Site #3 on Mars 
+
+    The asterisk ('*') can be used to generate lists:
+
+     Code         Meaning
+     ------------ -------------------------------------------------------------
+       *@301      List all predefined sites on the Moon
+       *@Phobos   List all predefined sites on the Martian moon Phobos
+       *@399      List all predefined sites on Earth
+       *@         List all predefined sites on Earth (observer/vector table)
+       *          List all predefined sites on Earth (observer/vector table)
+       *          List all major bodies (element table only)
+     
+    There are a several ways to request a body-centered site for a major body. 
+ 
+     Code         Meaning
+     ------------ -------------------------------------------------------------
+     500@601      Mimas body center 
+     geo@601            " 
+       g@601            " 
+       g@Mimas          "
+     500@Deimos   Deimos body center
+     geo          Earth Geocenter
+       g@399      Earth Geocenter     
+
+
+INPUT OF TOPOCENTRIC SITE COORDINATES
+-------------------------------------
+
+    For sites with IAU rotation models, topocentric sites may be input by the
+user as follows:
+
+     Code         Meaning
+     ------------ -------------------------------------------------------------
+      c @ Europa  Request prompting for user location on satellite Europa
+     coord @ 502  (same) 
+
+    The following satellites DO NOT have rotation models, thus do not support
+topocentric site definition. Only body-centered observers can be defined:
+
+         Jupiter:
+            Himalia (506), Elara (507), Pasiphae (508), Sinope (509), 
+            Lysithea (510), Carme (511), Ananke (512), Leda (512)
+
+         Saturn
+            Hyperion (607)
+
+         Uranus
+            Caliban (716), Sycorax(717)
+
+         Neptune
+            Nereid (802)
+
+    After coordinate input is requested, the site location may be entered
+as either geodetic or cylindrical coordinate triplets, separated by commas:
+
+              GEODETIC (generally this means map coordinates)
+                  E-long - Geodetic east longitude (DEGREES)
+                  lat    - Geodetic latitude  (DEGREES)
+                  h      - Altitude above reference ellipsoid (km)
+
+              CYLINDRICAL
+                  E-long - Angle eastward from XZ plane      (DEGREES)
+                  DXY    - Distance from Z axis              (KM)
+                  DZ     - Height above XY equator plane     (KM)
+
+    This system always uses planetographic/geodetic coordinates. This is 
+typically the one used on maps, such as those by the USGS, unless the map says
+otherwise. In these coordinates, the rotational pole of the body that lies on 
+the positive (north) side of the invariable plane of the solar system (the 
+plane perpendicular to the solar system's angular momentum vector) is called 
+the "north pole".
+
+    Northern latitudes are positive, southern are negative. The planetographic
+latitude takes into account body oblateness and, for a point on the surface, 
+is the angle between the body equatorial plane and the normal to the reference 
+surface at that point. For a point not on the reference surface, the geodetic
+latitude is the latitude of the point on the reference surface where the normal
+passes through the point at some altitude (h) above the reference surface. 
+
+    Prograde (or direct) rotation of a body is rotation eastward, or counter-
+clockwise, as seen from the north pole. For such bodies, east longitude is 
+measured negatively to the east (0 to -360 degrees) from the prime meridian. 
+Retrograde rotation is rotation clockwise (westward) as seen from the north 
+pole. East longitude is measured positively to the east (0 to 360 degrees) 
+from the prime meridian.
+
+    Exceptions are the Earth, Moon and Sun where longitude has historically 
+been measured both east and west of the prime meridian 0 to 180 degrees. Though
+these bodies are direct rotators, longitude is nonetheless measured positively
+to the east on this system, 0 to 360 degrees, due to historical precedence. If
+the positive west longitude of a site on these 3 bodies is given, it should be
+input here as positive east longitude, which would be (360 - West Longitude). 
+If the negative east longitude is given instead, for these exceptions only,
+one can input the negative east longitude. It will be converted to a positive
+east longitude on output, however. 
+
+    The following major bodies are either retrograde or exceptions and require
+site input with positive east longitude:
+
+       Retrograde (+ east longitude):
+       ------------------------------
+          Venus (299), Arial (701), Umbriel (702), Titania (703),
+          Oberon (704), Miranda (705), Cordelia (706), Ophelia (707),
+          Bianca (708), Cressida (709), Desdemona (710), Juliet (711),
+          Portia (712), Rosalind (713), Belinda (714), Puck (715),
+          Uranus (799), Pluto (999), Charon (901)
+
+       Also + east longitude (prograde exceptions): 
+       --------------------------------------------
+          Sun (10), Earth (399), Moon (301)
+
+    All others are prograde and must be input with negative longitude east
+of the adopted prime meridian. Since such sites are usually expressed in terms
+of positive west longitude on maps, negative east longitude would be ...
+
+                           ( West longitude - 360 )
+
+
+INTERPRETING NON-EARTH OBSERVER TABLES
+--------------------------------------
+
+   When placing a site on a body other than the Earth, some definitions
+become useful:
+
+ Interfering body:
+ ~~~~~~~~~~~~~~~~~
+
+   The largest other body in the system. Such a body can visually complicate
+observations at the site due to its brightness or by covering up the target.
+On the Earth, the "interfering body" is the Moon. On Io, it would be Jupiter.
+On Mars, it would be Phobos (largest body, though unlikely to genuinely
+interfere).  Mercury and Venus have no interfering bodies.
+
+   Observer tables provide some optional quantities that can be used to
+characterize the effect of the interfering body (or IB): how far is the target
+from the IB in the plane-of-sky, is it obscured by the IB, what fraction of the
+IB is lit by the Sun as seen from the observing site, and so on.
+
+ Deflecting body:
+ ~~~~~~~~~~~~~~~~
+ 
+   This is the Sun PLUS the most massive object in the planet/satellite system
+These two masses are used to compute the relativistic deflection of light that 
+can change the apparent position of the target body.
+
+ Other changes:
+ ~~~~~~~~~~~~~~
+ 
+   REFRACTION
+
+     There are no refraction effects modeled for non-Earth sites. Any request
+     for refraction is ignored and the refraction angle will be zero. This 
+     affects rise-set determination on non-Earth bodies as well.
+
+   AIRMASS
+
+     There is no airmass model or airmass cut-off available for non-Earth 
+     sites. Any request for airmass computation is ignored.
+
+   APPARENT RA & DEC
+
+     The origin of Right Ascension for apparent coordinates on NON-EARTH sites
+     with rotational models is the meridian containing the Earth equinox of 
+     J2000.0. Apparent declination is with respect to the particular body's 
+     true equator-of-date.  This allows an observer to align axes with the pole
+     and use the local apparent sidereal time output by this system to set the 
+     RA origin and acquire the target.
+
+     For objects lacking a pole & prime meridian rotational model (spacecraft
+     and certain asteroids that may have been redefined as "major bodies"),
+     the reference frame (ICRF or FK4/B1950.0) coordinate system is used to 
+     compute apparent places. That is, apparent RA and DEC are defined with 
+     respect to the Earth mean-equator and equinox of the frame epoch.
+
+   TIME
+ 
+     The print-time output by this system for observer tables (UT or TT) is
+     the instantaneous time on Earth. For non-Earth sites, it is unrelated to 
+     the rotation of the body. Local apparent solar time at the observing site
+     can be requested, as can the instantaneous light time from Earth to the
+     non-Earth site. 
+
+
+LIMITATIONS OF NON-EARTH/MOON ROTATION MODELS
+---------------------------------------------
+
+   For bodies outside the Earth-Moon system, precession and nutation effects
+are usually not known to high accuracy. Thus, the NON-Earth/Moon IAU rotation
+models, used by this system to determine topocentric site motion relative to
+the inertial frame as a function of time, are good to about 0.1 degree in the
+present era.
+
+   For the gas giants Jupiter, Saturn, Uranus and Neptune, IAU longitude is 
+based on the "Set III" prime meridian rotation angle of the magnetic field. 
+By contrast, pole direction (thus latitude) is relative to the body dynamical 
+equator. There can be an offset between the magnetic pole and the dynamical 
+pole of rotation.
+
+   For many satellites and the planet Mercury, the official IAU pole direction 
+was simply assumed perpendicular to the body's mean orbit plane, lacking better 
+information. For many satellites in the IAU model, the rotation rate was
+assumed equal to the mean orbital period.
+   
+   Some small satellite rotational models are strictly valid only at the time
+of the Voyager spacecraft flyby; extrapolation to other times is hazardous.
+Topocentric results for such bodies (610-614, for example) should be used
+cautiously if at all. Results in these cases reflect only the best available
+model, which is a suspect one.
+
+   As rotation models are refined through observation of surface features by
+visiting spacecraft (Cassini, etc.), Horizons will be updated to use the best
+officially sanctioned models available.
+
+===============================================================================
+
+                              OTHER COMMANDS
+
+
+  Program information:
+    MB .............. Show planet/natural-satellite (major-body) ID fields.
+    SB .............. Show small-body search-field names & meanings.
+    NEWS ............ Display program news (new capabilities, updates, etc.).
+    ?! .............. Extended help ('?' for brief help).
+
+  Program controls:
+    LIST ............ Toggle display of small-body match-parameter values.
+    PAGE ............ Toggle screen paging (scrolling) on or off.
+    EMAIL {X} ....... Set your email address to {X} for output delivery.
+    TTY {R} {C}...... Check or reset screen size; "tty" or "tty 24 79" to set.
+    X ............... Exit JPL on-line system (also "QUIT" or "EXIT").
+    - ............... Return to the previous prompt (back-up!).
+
+  Storing format default settings:
+    LOAD {macro} .... Load previously SAVED output-format {macro}.
+    SAVE {macro} .... Save/replace output-format macro with current settings.
+    DELETE {macro} .. Delete previously saved output-format macro.
+
+
+  Short-cuts:
+
+    * Move backward through the prompts by typing "-".
+    * Quit from ANY prompt by entering 'q'.
+    * To use a default (or previously entered value), press return.
+    * After selecting an object, enter "e+" to produce an ephemeris
+       format like the last one, without additional prompting. 
+
+===============================================================================
+                           SAVING PROGRAM SETTINGS
+
+   Telnet (interactive) users may go through program options once, then save 
+all settings for recall during future sessions. This can save time, if you find
+yourself always changing certain defaults or routinely defining the same output
+format each time you connect. Others in your organization may load and use the 
+same pre-defined format settings by name. 
+
+   To save program settings, go through the prompts and define the settings as
+you require. Then return to the main "Horizons>" prompt. 
+
+     #1)  Type "SAVE {NAME}", where {NAME} contains 1-12 characters.  
+     #2)  Next time you telnet to Horizons, type "LOAD {NAME}".
+
+   Your output preferences will then be loaded in as the new defaults.
+
+   If you make a mistake or want to change a setting later, two commands are 
+relevant: DELETE and SAVE 
+
+   DELETE a macro with command "DELETE {NAME}". Alternatively, change specific
+settings manually, then replace the stored  macro with a SAVE to an existing 
+name.  Delete and replace operations require input of a confirming password. 
+LOAD does not. Thus, anyone can use your settings if they know the macro name. 
+Only those who know the password can change or delete a macro.
+
+   Start/stop dates are also saved in the macro, as is observing location. 
+You need only load the macro and select the target. Remaining defaults will be 
+as defined in the format macro. If the macro is for an individual (personal 
+use), you may want to set the e-mail address prior to saving. Otherwise don't, 
+so users of the macro will be prompted for it in the future.
+
+   A macro may be loaded, then specific settings overruled by responding to the
+program prompts.  For example, if your last table prior to saving the macro was
+a "vector" table, that table type will be saved as the default. 
+
+   Settings for the other table types are saved as well so, to access them, 
+manually respond to the prompt requesting table type, over-riding the macro's 
+"vector" default on that issue.  Start and stop times are also macro settings 
+that may commonly be overruled as necessary. 
+
+   Ideally, macro names would be something clean and logical:
+
+            "OBS670-1" for macro #1 for Observatory Code 670, etc. 
+
+   ... but the name is up to you. 
+
+   The use of macros may make it less likely to stumble upon new capabilities 
+as they are added, though they will described here and in the system news,
+as appropriate. 
+
+===============================================================================
+                             INTEGRATOR DISPLAY
+
+     Comet and asteroid ephemerides are integrated from initial conditions
+called "osculating elements". These describe the 3-dimensional position and
+velocity of the body at a specific time. The integrator starts with this state
+and takes small time steps, summing the perturbing forces at each step before 
+taking another step. A variable order, variable step-size integrator is used 
+to control error growth. In this way, the gravitational attraction of other 
+major solar system bodies on the target body trajectory is taken into account.
+ 
+     The integrator starts at the epoch, or time, of the osculating elements. 
+It then integrates forward or backward, as necessary, to the start of the 
+requested table. Once it reaches the table start time, it may have to reverse 
+direction and go forward in time to generate the table. 
+
+     Every 50th step will be displayed so the user can get some sense of the 
+progress of the ephemeris. Direction reversals are also displayed. If output 
+is requested at small time intervals, the integrator may proceed rapidly to 
+the start of the table. There may then be long (apparent) pauses, as numerous 
+interpolations within a given integration step are performed to compute states
+at closely spaced print times.
+
+     The last number on the integrator display line is the most recent step
+size in days.
+
+===============================================================================
+                           SPECIFICATION OF TIME
+
+ACCEPTED FORMATS:
+
+     Time may be specified many ways in addition to the primary form
+"YYYY-MMM-DD HH:MM".  Of particular note are Julian day number and day-of-year 
+forms.  Examples are shown below.  Input start times may be specified to 
+1/1000th of a second if the default output setting is changed from "minutes".
+
+     Generally, if the input start time has more digits of precision specified 
+than the selected output format, start time will be truncated to the 
+appropriate level. For example, if a start time of 23:45:12.4 is specified, but
+the output format is only set to minutes, start time will automatically be 
+changed to 23:45(:00.000).
+
+                    YOUR INPUT             PROGRAM INTERPRETATION
+                 ------------------------  ----------------------
+Recommended:     1997-May-5 12:30:23.3348   ( 5 MAY 1997 12:30:23.334 )
+
+Acceptable:      1965-Jan-27.47083333       (27 JAN 1965 11:18 )
+                 1/9/96 3 12 59.2           ( 9 JAN 1996 03:13 )
+                 1 9 96 3,12,59.2           ( 9 JAN 1996 03:13 )
+                 2 jan 91 3:00 12.2         ( 2 JAN 1991 03:00 )
+                 91 MAR 10 12:00:00         (10 MAR 1991 12:00 )
+                 29 February 1975 3:00      ( 1 MAR 1975 03:00 )
+                 10 October 29 3:58         (29 OCT 2010 03:58 )
+                 dec 31 86 12               (31 DEC 1986 12:00 )
+                 86-365 // 12               (31 DEC 1986 12:00 )
+                 JUL 98                     ( 1 JUL 1998 00:00 )
+                 JD 2451545.                ( 1 JAN 2000 12:00 )
+                 JD2451545.                 ( 1 JAN 2000 12:00 )
+                 278bc-jan-12 12:34         (B.C. 12 JAN  278 12:34)
+                 AD 99-Aug-12 12:34         (A.D. 12 JAN   99 12:34)
+                 bc 278-Jan-12 12:34        (B.C. 12 JAN  278 12:34)
+
+    The program will interpret other forms as well, but if you get too casual,
+you may end up with a surprise interpretation.
+ 
+    The program's time-span prompts indicate the earliest & latest dates that 
+may be used for the selected target/center combination, as well as the type of
+time assumed being input (UT, CT, or TT).
+
+    For cartesian coordinates or osculating elements tables, only CT may be 
+used.  For observer tables, output may be either UT or TT. TO CHANGE THE UT 
+DEFAULT for observer tables, append a "TT" when entering START time. To switch 
+back, append a "UT" to the start time.
+
+    The three time systems are described as follows: 
+
+       CT ("Coordinate Time"); typically for cartesian and osculating element 
+           tables. The uniform time scale and independent variable of the 
+           ephemerides.
+
+       TT  ("Terrestrial (Dynamic) Time"), called TDT prior to 1991, used for
+           observer quantity tables. This is proper time as measured by an 
+           Earth-bound observer and is directly related to atomic time, TAI.
+           TT periodically differs from CT by, at most, 0.002 seconds.
+
+       UT  is Universal Time. This can mean one of two non-uniform time-scales 
+           based on the rotation of the Earth. For this program, prior to 1962, 
+           UT means UT1.  After 1962, UT means UTC or "Coordinated Universal 
+           Time". Future UTC leap-seconds are not known yet, so the closest 
+           known leap-second correction is used over future time-spans.
+
+
+ TIME ZONE CORRECTIONS:
+ ----------------------
+ Output time-tags may also be in local civil time. When specifying start time,
+ enter your time-zone correction in the format:
+ 
+                     YYYY-Mon-Dy HH:MM UT{s}HH{:MM}
+ ... where
+ 
+    {s} ...  optional sign (+ or -). If unspecified, it is assumed "+".
+    HH  ...  integer hours time-zone difference from UT
+  {:MM} ...  optional minutes offset (usually 0)
+ 
+ North American standard time (winter) zone corrections are as follows:
+ 
+          Atlantic Standard Time (AST) =  UT-4 hours
+          Eastern Standard Time  (EST) =  UT-5 hours
+          Central Standard Time  (CST) =  UT-6 hours
+          Mountain Standard Time (MST) =  UT-7 hours
+          Pacific Standard Time  (PST) =  UT-8 hours
+ 
+ If daylight savings is in effect (summer), add one hour to above offsets.
+ 
+ For example, "1999-jun-2 12:30 UT-8" produces a table in Pacific Standard
+ Time. A "-7" would provide Pacific Daylight Time (or MST, if it is winter).
+
+
+ GREGORIAN AND JULIAN CALENDAR DATES:
+ ------------------------------------
+
+    Input calendar dates 1582-Oct-15 and after are taken to be expressed in the 
+extended Gregorian calendar system. Prior dates are assumed to be in the Julian 
+proleptic calendar. 
+
+    Historically, not all regions switched calendars at the same time (or
+even in the same century). Thus, the user must be aware of which calendar was 
+in effect for a particular historical record. It should NOT be assumed this 
+system's calendar automatically correlates with a date from an arbitrary 
+historical document.
+
+    Here is the progression near the calendar switch point:
+
+       Calendar Type    Calendar Date   Julian Day Number
+       -------------    -------------   -----------------
+        Julian           1582-Oct-03        2299158.5
+        Julian           1582-Oct-04        2299159.5 --->
+         (skipped)      "1582-Oct-05"       2299160.5    |
+         (skipped)      "1582-Oct-06"       2299151.5    |
+         (skipped)      "1582-Oct-07"       2299152.5    |
+         (skipped)      "1582-Oct-08"       2299153.5    |
+         (skipped)      "1582-Oct-09"       2299154.5    |
+         (skipped)      "1582-Oct-10"       2299155.5    |
+         (skipped)      "1582-Oct-11"       2299156.5    |
+         (skipped)      "1582-Oct-12"       2299157.5    |
+         (skipped)      "1582-Oct-13"       2299158.5    |
+         (skipped)      "1582-Oct-14"       2299159.5    |
+        Gregorian        1582-Oct-15        2299160.5 <--- 
+        Gregorian        1582-Oct-16        2299161.5 
+        Gregorian        1582-Oct-17        2299162.5
+
+    Note that Julian (calendar) dates are different than (and unrelated to)
+Julian day numbers.
+
+    Examination of this table shows that the date labels from Oct 5, 1582 
+through Oct 14, 1582 don't exist. Of course, the days themselves do, as is
+shown in the continuous Julian day number column; it's just a matter of what
+one calls them. If you specify a non-existent calendar date label that was 
+"skipped", this program will automatically use a day number, as shown above,
+that maps into the previous Julian calendar system. For example, requesting
+a date of 1582-Oct-14 (skipped) is the same as requesting the Julian calendar 
+date 1582-Oct-04.
+
+ANCIENT DATES:
+
+    Objects 0-10, 199, 299, 301, 399 and 499 (planet barycenters, their
+equivalents and the Sun & Moon) are available over a 3000 B.C. to A.D. 3000
+interval. When specifying ancient calendar dates, this system requires input in
+the "BC/AD" scheme.  If no "BC" marker is input with a calendar date, it is
+assumed to be "AD".  Exceptions are AD years less than 100 which must have an
+AD symbol in the date in order to be recognized as a valid year. For example,
+"66ad-jan-27" will be accepted, but "66-Jan-27" cannot be parsed. 
+
+    In this system, there are no negative years. The progression is as follows:
+
+               Julian Day Number       Labeling-convention
+                 (Jan 1 00:00)       BC/AD      Arithmetical 
+               -----------------     -----      ------------
+                   1720327.5          3bc           -2
+                   1720692.5          2bc           -1
+                   1721057.5          1bc            0
+                   1721423.5          1ad            1
+                   1721788.5          2ad            2
+
+    From this, one can see that no days (in the arithmetical year "0", for 
+example) are skipped in the BC/AD scheme, but they do have a different label 
+than in the corresponding arithmetical system.
+
+    Output observer-table lines begin with a 'b' in column 1, to indicate B.C.
+dates, and a space (" ") to indicate A.D. dates.
+
+
+OUTPUT STEPPING:
+----------------
+
+ Fixed time steps:
+
+    Output time steps are specified as integers with some associated units 
+from the set {days, hours, minutes}. Example responses to the prompt include
+"30 days", "1 day", "10 min", and so on.  To get half day steps, specify
+"12 hour". 
+
+    It is possible to obtain output at less than 1 minute intervals. After 
+specifying a start and stop time, give a positive integer as the "time-step", 
+without giving units, such as "10".  This will divide the time span into 
+10 parts. For example, if start and stop times are one hour (3600 seconds) 
+apart, specifying a step of "240" will produce output every 15 seconds 
+(3600/15 = 240 intervals). "3600" will produce output every second. 
+
+    Rise/set and satellite eclipse circumstances may not be accurate to less 
+than a minute since factors such as the primary's oblateness and atmosphere 
+are not currently modelled.
+
+ Calendar steps:
+
+    If a step-size in units of "years" or "months" is specified, output steps
+will follow the calendar based on the starting date.  
+
+    For example, if the start is 2008-Feb-29, and output is requested at 
+"1 year" steps, output will be returned only for Feb 29 calendar days in those
+leap years having 29 days in Februrary. 
+
+    If output is requested at "1 month" intervals, output will occur for every 
+successive month on the 29th of that month.  If a start date on the 31st is 
+requested, output will only occur for months having 31 days.
+
+ Time-varying steps:
+
+    Output is typically at fixed time intervals. However, observer tables may 
+additionally be requested at time-varying steps based on an angular shift
+specification. That is, "output only if the object has moved at least X
+arcseconds in the plane-of-sky". 
+
+    When specifying step-size, with the telnet or e-mail interfaces, respond 
+with something like "VAR ####", where '####' is an integer from 60 to 3600
+arcseconds. This will trigger output whenever the object's position is
+predicted to be '####' arcseconds different from the current output step 
+in the observer's plane-of-sky.
+
+    To preserve system performance, the time-varying output mode uses a 
+simple linear extrapolation to predict the time when the object should have 
+moved the requested distance.  Due to non-linearities in the object's actual 
+motion in the plane-of-sky, this projection can be off by .1 to 5 (or more) 
+arcsecs. Thus the angular-motion print criteria you give should be considered 
+approximate.
+
+    Computed quantities will be exact for the given time in the output, but 
+the particular output time may not be exactly that required for the requested 
+angular change.
+
+===============================================================================
+                              REFERENCE FRAMES
+
+  It is necessary to adopt a commonly agreed-upon coordinate system for 
+describing the position and velocity of an object in three-dimensional space. 
+This program has two basic frames available:
+
+  "J2000" refers to the frame of the current planetary ephemeris. This is 
+closely aligned with the International Celestial Reference Frame (ICRF). 
+The planetary ephemeris coordinates differ from ICRF by at most 0.001 
+arcseconds, while the ICRF is thought to differ from the FK5 optical catalog 
+system by at most 0.01  arcseconds.
+
+  The planetary ephemeris (and ICRF) coordinate directions are defined purely 
+with respect to external radio sources (quasars), but can  be thought of as 
+approximately corresponding to these basis directions:
+
+        +Z coordinate is normal to Mean Earth Equator of Epoch J2000.0
+        +X coordinate is parallel to Mean Earth Dynamical Equinox of 
+            Epoch J2000.0
+        +Y coordinate completes the right-handed system
+
+   "B1950" selects an inertial reference frame based on Earth Mean-Equator 
+and FK4 optical catalog Equinox of Epoch B1950.0 (FK4/B1950.0), where the 
+Epoch of B1950.0 is the Julian date at the start of the Besselian year 
+B1950.0 (2433282.42345905). The Fricke equinox correction at Epoch is applied.
+
+===============================================================================
+                              COORDINATE SYSTEMS
+       
+      CARTESIAN VECTORS and OSCULATING ELEMENTS may be requested in one of 
+three available coordinates systems derived from the selected basic reference 
+frame. These systems can be defined with respect to the reference frames 
+(above) as follows:
+ 
+  Earth mean equator and equinox of reference epoch
+ 
+    Reference epoch: J2000.0 or B1950.0
+    xy-plane: plane of the Earth's mean equator at the reference epoch
+    x-axis  : out along ascending node of the instantaneous plane of the
+              Earth's orbit and the Earth's mean equator at the reference epoch
+    z-axis  : along the Earth mean north pole at the reference epoch
+ 
+  Ecliptic and mean equinox of reference epoch
+             
+    Reference epoch: J2000.0 or B1950.0
+    xy-plane: plane of the Earth's orbit at the reference epoch
+    x-axis  : out along ascending node of instantaneous plane of the Earth's
+              orbit and the Earth's mean equator at the reference epoch
+    z-axis  : perpendicular to the xy-plane in the directional (+ or -) sense 
+              of Earth's north pole at the reference epoch. 
+ 
+  Body mean equator and node of date
+ 
+    Reference epoch: "of date"
+    Reference plane: ICRF or FK4/B1950.0
+    xy-plane: central-body mean equator plane at reference epoch
+    x-axis  : out along the ascending node of the central-body mean equator
+              plane on the reference plane at the reference epoch
+    z-axis  : along the central-body mean north pole at the reference epoch
+
+OBSERVER TABLE COORDINATES, such as RA and DEC, may be with respect to two 
+possible coordinate systems:
+
+Earth mean equator and equinox of reference epoch (astrometric coordinates):
+
+    Reference epoch: J2000.0 or B1950.0
+    xy-plane: plane of the Earth's mean equator at the reference epoch
+    x-axis  : out along ascending node of the instantaneous plane of the 
+              Earth's orbit and the Earth's mean equator at the reference epoch
+    z-axis  : along the Earth mean north pole at the reference epoch 
+
+Body true equator and Earth equinox of date (apparent coordinates)
+    Reference epoch: "of date"
+    xy-plane: plane of the body's true equator at the reference epoch
+    x-axis  : out along ascending node of instantaneous plane of the Earth's 
+              orbit and the Earth's true equator plane at the reference epoch
+    z-axis  : along the body's true north pole at the reference epoch
+
+===============================================================================
+                          SEARCHING FOR SMALL-BODIES
+
+   Search for small-bodies with following keywords (Type R=real, I=integer, 
+C=char). Use comparisons from the set { <, >, <>, = }. Separate each field with
+a semi-colon. Example search formulation:
+ 
+                   A < 2.5; IN > 7.8; STYP = S; GM <> 0;
+
+The first group of keywords are common to asteroids AND comets: 
+
+ Type     Keyword     Description
+ ----     -------     -----------
+  C       NAME ...... Asteroid OR comet name fragment
+  C       DES ....... Object designation
+  R       EPOCH ..... Julian Date of osculating elements
+  R       CALEPO .... Calendar date of osc. elements; YYYYMMDD.ffff
+  R       A ......... Semi-major axis (AU)
+  R       EC ........ Eccentricity
+  R       IN ........ Inclination of orbit plane (DEG) wrt ecliptic
+  R       OM ........ Longitude of Ascending Node (DEG) wrt ecliptic/equinox
+  R       W ......... Argument of Perihelion (DEG) wrt ecliptic/equinox
+  R       TP ........ Perihelion Julian Date
+  R       CALTP ..... Perihelion calendar date; YYYYMMDD.ffff
+  R       MA ........ Mean anomaly (DEG) 
+  R       PER ....... Orbital period (YRS)
+  R       RAD ....... Object radius (KM)
+  R       GM ........ Object GM (KM^3/S^2), only a few are known
+  R       QR ........ Perihelion distance (AU)
+  R       ADIST ..... Aphelion distance (AU)
+  R       ANGMOM .... Specific angular momentum (AU^2/DAY)
+  R       N ......... Mean motion (DEG/DAY)
+  R       DAN ....... Heliocentric dist. (AU) of ascending node
+  R       DDN ....... Heliocentric dist. (AU) of descending node
+  R       L ......... Ecliptic longitude of perihelion (DEG)
+  R       B ......... Ecliptic latitude of perihelion (DEG)
+  I       NOBS ...... Number of astrometric determinations in solution
+  C       SOLN ...... Solution ID
+
+The next parameters are ASTEROID SPECIFIC. If one or more is used, the search
+will conclude faster by examining asteroids only. For example, including
+something like 'H > -10;' will limit the search to asteroids only:
+
+  C       ASTNAM .... Asteroid name fragment (designation if unnamed)
+  R       B-V ....... B-V color (asteroid)
+  R       H ......... Absolute magnitude parameter (asteroid)
+  R       G ......... Magnitude slope parameter; can be < 0 (asteroid)
+  R       ROTPER .... Rotational period, hrs (asteroid)
+  R       ALBEDO .... Geometric albedo (asteroid)
+  C       STYP ...... Spectral type, Tholen scheme (asteroid)
+
+The next parameters are COMET SPECIFIC. If one or more is used, the search
+will conclude faster by examining comets only. For example, including something
+like "M1 > -10;' will limit the search to comets only:
+
+  C       COMNAM .... Comet name fragment (designation if unnamed)
+  I       COMNUM .... Comet number
+  R       M1 ........ Total absolute magnitude (comet)
+  R       M2 ........ Nuclear absolute magnitude (comet)
+  R       K1 ........ Total magnitude scaling factor (comet)
+  R       K2 ........ Nuclear magnitude scaling factor (comet)
+  R       PHCOF ..... Phase coefficient for k2=5 (comet)
+  R       A1 ........ Radial non-grav accel (comet), 10^-8 AU/DAY^2
+  R       A2 ........ Transverse non-grav accel (comet), 10^-8 AU/DAY^2
+  R       A3 ........ Normal non-grav accel (comet), AU/d^2
+  R       DT ........ Non-grav lag/delay parameter (comet), days
+
+  Only 1 of the 4 keywords 'ASTNAM', 'COMNAM', 'NAME' or 'DES' can be 
+specified on a given search.
+ 
+Directives:
+-----------
+
+There are 5 special directives that may be used to limit or control searches:
+ 
+     Directive  Description
+     ---------  -----------
+     COM .....  Limit search to comets only
+
+     AST .....  Limit search to asteroids only
+
+     LIST ....  Display parameter values for matched objects. (This may be
+                 set as a default for all subsequent searches by typing "LIST"
+                 at the main system prompt, "Horizons>".)
+
+                For example,
+                 "A < 2.5; IN > 10; AST;"        (match parameters against 
+                                                  asteroids ONLY)
+                 "A < 2.5; IN > 10; AST; LIST;"  (match AND display values 
+                                                  of the parameters)
+
+     NOFRAG ..  Exclude/skip comet fragments
+
+     CAP .....  A filter that guarantees only one comet apparition will be 
+                 returned for each comet. It may be used three ways:
+
+                 CAP;        (returns last apparition before the current date)
+                 CAP < JD#;  (returns last apparition before the specified 
+                               Julian Day Number)
+                 CAP < YEAR; (returns last apparition before the given integer
+                               year)
+
+                If the number after a '<' is less than 10000, it is assumed 
+                to be a year integer. Otherwise, the number is taken to be 
+                a Julian Day Number.  If "CAP;" is specified, the search is 
+                automatically recognized as being a comets-only search.
+ 
+
+Contents of Small-body Database & Update Frequency:
+---------------------------------------------------
+
+    Excluded from the database are single opposition asteroids with 
+observational data arcs less than 30 days, unless they are NEO's, "PHA's" or 
+radar targets (which ARE included). Everything else is in. 
+ 
+    Except for "PHA's" and NEOs, which are usually included within a couple 
+hours of announcement, there can be a delay of a few days to a couple weeks 
+before newly discovered objects (that meet the filter criteria) are added. 
+Users can input their own objects, as described in the next section. The 
+database is updated hourly with new objects and orbit solutions. 
+
+===============================================================================
+                          USER-SPECIFIED SMALL-BODIES
+       
+    It is possible to define an object not in the database by inputting its
+HELIOCENTRIC ECLIPTIC elements and some other parameters. Type ';' at the main 
+prompt. It is also possible to display a database object, then "cut-and-paste" 
+elements back into the program, varying parameters (such as magnitude), as 
+needed.  Cut-and-paste is a function of your local terminal capability.
+
+  PRESS <return> ON A BLANK LINE WHEN DONE. Input format is:   
+ 
+          LABEL= VALUE LABEL= VALUE ...
+          LABEL= VALUE ...
+            .
+            .
+
+... where acceptable label strings are defined as follows:
+       EPOCH ....  Julian ephemeris date (CT) of osculating elements
+       EC .......  Eccentricity
+       QR .......  Perihelion distance in (AU)
+       TP .......  Perihelion Julian date
+       OM .......  Longitude of ascending node (DEGREES) wrt ecliptic
+       W ........  Argument of perihelion (DEGREES) wrt ecliptic
+       IN .......  Inclination (DEGREES) wrt ecliptic
+
+Instead of {TP, QR}, {MA, A} or {MA,N} may be specified (not both):
+       MA .......  Mean anomaly (DEGREES)
+       A ........  Semi-major axis (AU)
+       N ........  Mean motion (DEG/DAY)
+
+Note that if you specify elements with MA, {TP, QR} will be computed from
+them. The program always uses TP and QR internally.
+
+OPTIONAL INPUTS
+---------------
+       RAD ......  Object radius (KM)
+       AMRAT ....  Area-to-mass ratio (m^2/kg). Setting to a non-zero value
+                    activates calculation of solar radiation pressure
+                    acceleration. Total absorption is assumed, so scale the
+                    value to account for reflectivity. For example, if 15% 
+                    of light is reflected, specify a value for AMRAT for
+                    which the actual value is multiplied by 1.15.
+
+  For asteroids, additional OPTIONAL parameters can be given:
+       H ........  Absolute magnitude parameter (asteroid)
+       G ........  Magnitude slope parameter; can be < 0 (asteroid)
+
+  For comets, additional OPTIONAL parameters can be given:
+       M1 ........ Total absolute magnitude (comet)
+       M2 ........ Nuclear absolute magnitude (comet)
+       K1 ........ Total magnitude scaling factor (comet)
+       K2 ........ Nuclear magnitude scaling factor (comet)
+       PHCOF ..... Phase coefficient for k2=5 (comet)
+       A1 ........ Radial non-grav accel (comet), AU/DAY^2
+       A2 ........ Transverse non-grav accel (comet),  AU/DAY^2
+       A3 ........ Normal non-grav accel (comet), AU/d^2
+       DT ........ Non-grav lag/delay parameter (comet), days.
+
+  You may enter each value on a separate line or several on one line.  If you
+make a mistake, re-entering the label on another line will over-ride the
+previously specified value.  To erase a value, enter something like "H=", 
+where no value is given. To cancel all input, enter "-" as the first character
+on a line. To log-out, enter a "q" or "x" as first character on a line. 
+
+  When done, after having pressed <return> on a blank line, you will be asked 
+whether the reference frame of the elements is FK5/J2000.0 or FK4/B1950.0.
+You will also be asked the object name.
+
+Example input:
+
+ EPOCH= 2450200.5
+  EC= .8241907231263196 QR= .532013766859137 TP= 2450077.480966184235
+  OM= 89.14262290335057 W = 326.0591239257098 IN= 4.247821264821585
+  A1= -5.113711376907895D-10 A2= -6.288085687976327D-10
+
+===============================================================================
+                       CUSTOMIZING REQUESTED EPHEMERIDES
+
+   Keys are embedded in output ephemerides to assist with automated reading of
+the output by user's own software. The keys are defined as follows:
+
+                         $$SOE    Start of ephemeris
+                         $$EOE    End of ephemeris
+
+   Ephemerides may be customized by changing output default flags.  The '*' 
+symbols below denote login defaults. All tables may be optionally output in a 
+"comma-separated-value" format for import into spreadsheets.
+
+
+1. Cartesian state vector table 
+   ----------------------------
+
+       Any object with respect to any major body.
+
+       Reference frame:
+    *      J2000 (ICRF/J2000.0) 
+           B1950 (FK4/B1950.0)    
+
+       Coordinate system:
+           Earth mean equator and equinox of frame Epoch (J2000.0 or B1950.0)
+    *      Ecliptic and mean equinox of frame Epoch (J2000.0 or B1950.0)
+           Central body mean equator and node of date 
+
+       Aberration corrections:
+    *      NONE  (geometric state vectors)
+           LT    (light-time)
+           LT+S  (light-time & stellar aberration)     
+
+       Units:
+           KM and seconds
+           KM and days
+           AU and days
+
+       Quantities Output:
+
+        Format   Output
+        ------   ------
+             1   Position components {x,y,z} only 
+             2   State vector {x,y,z,vx,vy,vz}
+    *        3   State vector + 1-way light-time + range + range-rate 
+             4   Position     + 1-way light-time + range + range-rate 
+             5   Velocity components {vx, vy, vz} only             
+             6   1-way light-time + range + range-rate
+
+
+2. Osculating elements table
+   -------------------------
+
+       Any object with respect to any planet or barycenter
+
+       Reference frame:
+  *        J2000 (ICRF/J2000.0) 
+           B1950 (FK4/B1950.0  )    
+ 
+       Coordinate system:
+           Earth mean equator and equinox of frame Epoch (J2000.0 or B1950.0)
+  *        Ecliptic and mean equinox of frame Epoch (J2000.0 or B1950.0)
+           Central body mean equator and node of date 
+
+       Units:
+           KM and seconds
+           KM and days
+           AU and days
+
+  *    Output quantities (fixed):
+           JDCT     Epoch Julian Date, Coordinate Time
+            EC      Eccentricity   
+            QR      Periapsis distance
+            IN      Inclination w.r.t. xy-plane (degrees)            
+            OM      Longitude of Ascending Node (degrees)                 
+            W       Argument of Perifocus (degrees)                    
+            Tp      Periapsis time (user specifies absolute or relative date) 
+             N      Mean motion (degrees/DU)
+            MA      Mean anomaly (degrees)                               
+            TA      True anomaly (degrees)
+             A      Semi-major axis 
+            AD      Apoapsis distance
+            PER     Orbital Period
+
+
+3. Observer table
+   --------------
+
+        Any object with respect to geocentric or topocentric observer, including
+        spacecraft and sites on other planets or natural satellites.
+
+        Default quantities. Always output:
+           Time
+           Solar-presence
+           Lunar-presence
+
+        Selectable quantities. Output in order requested.  No initial default 
+        exists. You will be prompted at least once. A detailed definition of
+        these values follows, with the '*' symbols marking those quantities
+        affected by user selection of airless or refraction-corrected apparent
+        quantities. Quantities preceded by a '>' are statistical uncertainties 
+        that can be computed for asteroids and comets if a covariance is 
+        available, either in the database or supplied by the user.  Number 
+        assignments could change if new quantities are added:
+
+  1. Astrometric RA & DEC  15. Sun sub-long & sub-lat  29. Constellation ID
+ *2. Apparent RA & DEC     16. Sub Sun Pos. Ang & Dis  30. Delta-T (CT - UT)
+  3.   Rates; RA & DEC     17. N. Pole Pos. Ang & Dis *31. Obs eclip. lon & lat
+ *4. Apparent AZ & EL      18. Helio eclip. lon & lat  32. North pole RA & DEC
+  5.   Rates; AZ & EL      19. Helio range & rng rate  33. Galactic latitude
+  6. Sat. X & Y, pos. ang  20. Obsrv range & rng rate  34. Local app. SOLAR time
+  7. Local app. sid. time  21. One-Way Light-Time      35. Earth->Site lt-time
+  8. Airmass               22. Speed wrt Sun & obsrvr >36. RA & DEC uncertainty
+  9. Vis mag. & Surf Brt   23. Sun-Obsrvr-Target angl >37. POS error ellipse
+ 10. Illuminated fraction  24. Sun-Target-Obsrvr angl >38. POS uncertainty (RSS)
+ 11. Defect of illumin.    25. Targ-Obsrv-Moon/Illum% >39. Range & Rng-rate sig.
+ 12. Sat. angle separ/vis  26. Obsr-Primary-Targ angl >40. Doppler/delay sigmas
+ 13. Target angular diam.  27. Pos. Ang;radius & -vel
+ 14. Obs sub-lng & sub-lat 28. Orbit plane angle
+
+  ... or select a pre-defined format below:
+  A = All quantities      B = Geocentric only        C = Small-body geocentric
+  D = Small-body topo.    E = Spacecraft geocentric  F = Spacecraft topocentric
+ 
+  The alphabetic assignments specifically mean:
+  A = 1-40                       B = 1-3,6,9-33        C = 1-3,9-11,13,18-29,
+                                                           33,36-40
+  D = 1-5,8-10,11,13,18-29,      E = 1-3,8,10,18-25,29 F = 1-5,8,10,18-25,29
+      33-34,36-40
+
+  ... with the small-body cases primarily skipping cartographic dependent
+quantities. Note that Ida and Gaspra are exceptions, having IAU-defined
+mapping grids, so that C & D options won't provide all available data for such 
+objects. In the list below, '*' indicates initial program default settings.
+
+        Reference coordinate frame:
+  *       J2000 (ICRF/J2000.0) 
+          B1950 (FK4/B1950.0 )    
+          Body true-equator and Earth equinox of-date
+
+        Time scale:
+  *       UT  (Universal Time) 
+          TT  (Terrestrial Time)
+
+        Time zone correction (used for UT-based tables only)
+
+        Time format
+  *       Calendar
+          JD (Julian date)
+          Both
+
+        Time output precision (calendar format only)
+  *       MINUTES (HH:MM)
+          SECONDS (HH:MM:SS)
+          FRACSEC (HH:MM:SS.fff)
+
+        Right-ascension format
+  *       Hours, minutes, seconds of arc (DEC degrees, minutes, seconds)
+          Decimal degrees 
+
+        High-precision RA/DEC output
+  *       No  (~ 10^-2 arcsec; HH MM SS.ff DD MM SS.f)
+          Yes (~ 10^-4 arcsec; HH MM SS.ffff DD MM SS.fff)
+
+        Apparent coordinate corrections
+  *       Airless apparent 
+          Refracted apparent
+
+        Minimum elevation (integer value)
+  *       -90 degrees
+
+        Maximum airmass (real value)
+  *       38.0 (refracted elevation = -0 deg)
+
+        Rise/Transit/Set print ONLY
+  *       No
+          TVH -- True visual horizon. Includes dip and refraction (Earth only).
+          GEO -- Geometric horizon. Includes refraction (Earth only).
+          RAD -- Radar horizon. Geometric horizon, no refraction.
+
+        Skip Daylight
+  *       No
+          Yes 
+
+===============================================================================
+                   DEFINITION OF OBSERVER TABLE QUANTITIES
+
+
+  The menu of observer table output quantities was shown above. The format of 
+the table is as follows. "Labels" refers to column headings at the start of 
+the table:
+ 
+TIME
+  One output line for each step. The line begins with a 'b' if the date is BC,
+a blank (" ") if AD. This is followed by the date and time, which is either
+UT or TT, in calendar or JD format (or both), depending on user defaults.
+
+SOLAR PRESENCE
+  Time tag is followed by a blank, then a solar-presence symbol:
+          
+        '*'  Daylight (refracted solar upper-limb on or above apparent horizon)
+        'C'  Civil twilight/dawn
+        'N'  Nautical twilight/dawn
+        'A'  Astronomical twilight/dawn
+        ' '  Night OR geocentric ephemeris 
+
+INTERFERING BODY/LUNAR PRESENCE
+  The solar presence symbol is immediately followed by another marker symbol:
+
+        'm'  Refracted upper-limb of Moon/IB on or above apparent horizon
+        ' '  Refracted upper-limb of Moon/IB below apparent horizon OR 
+              geocentric ephemeris
+        'r'  Rise    (target body on or above cut-off RTS elevation)
+        't'  Transit (target body at or past local maximum RTS elevation)
+        's'  Set     (target body on or below cut-off RTS elevation)
+
+  The 'rts' codes will be displayed under two conditions only: if the print 
+interval is less than or equal to 30 minutes or the RTS-only print option has 
+been selected.
+
+  For non-Earth observing sites, no twilight/dawn codes (C, N, or A) are
+output, refraction is not modelled and the interfering body marker is 'x'
+instead of the 'm' reserved for Earth's Moon.
+
+STATISTICAL UNCERTAINTIES
+
+  Output for asteroids and comets can include formal +/- 3-standard-deviation 
+statistical orbit uncertainty quantities. There is a 99.7% chance the actual 
+value is within given bounds.  These statistical calculations assume 
+observational data errors are random. If there are systematic biases (such as 
+timing, reduction, or star-catalog errors), results can be optimistic. Because 
+the epoch covariance is mapped using linearized variational partial 
+derivatives, results can also be optimistic for times far from the solution 
+epoch, particularly for objects having close planetary encounters.
+
+NOTE: "n.a." is output if a requested quantity is not available for selected 
+      object. For example, azimuth and elevation for a geocentric ephemeris,
+      or uncertainties for an object with no covariance in the database.
+
+
+SPECIFIC QUANTITIES
+
+  1. Astrometric RA & DEC: 
+        Corrected for light-time only. With respect to the Earth mean equator 
+        and equniox of the reference Epoch. If FK4/B1950.0 frame output is 
+        selected, elliptic aberration terms are added.
+
+        Labels:  R.A._(ICRF/J2000.0)_DEC  (HMS/DMS format)
+                 R.A._( FK4/B1950.0)_DEC  (HMS/DMS format)
+                 R.A._(J2000.0)_DEC.      (degree format)
+                 R.A._(B1950.0)_DEC.      (degree format)
+
+  2. Apparent RA & DEC:
+        Apparent right ascension and declination of the target with respect
+     to the center/site body's true-equator and Earth equinox of-date. For
+     non-Earth sites with rotational models, the origin of RA is the meridian 
+     containing the Earth equinox of J2000.0. For non-Earth sites without 
+     rotational models, RA and DEC are with respect to the REFERENCE FRAME
+     (FK4/B1950 or ICRF/J2000.0) coordinate system. Corrected for light-time, 
+     the gravitational deflection of light, stellar aberration, precession and 
+     nutation. There is an optional (approximate) correction for atmospheric 
+     refraction (Earth only).
+
+        Labels:  R.A._(a-apparent)__DEC.  (airless, HMS/DMS format)
+                 R.A._(r-apparent)__DEC.  (refracted, HMS/DMS format)
+                 R.A._(a-appar)_DEC.      (airless, degrees format)
+                 R.A._(r-appar)_DEC.      (refracted, degrees format)
+
+  3. Rates; RA & DEC
+        The rate of change of apparent RA and DEC (airless). d(RA)/dt is 
+     multiplied by the cosine of declination. Units are ARCSECONDS PER HOUR.
+     
+        Labels:  dRA*cosD d(DEC)/dt
+
+  4. Apparent AZ & EL:
+        Apparent azimuth and elevation of target. Corrected for light-time, 
+     the gravitational deflection of light, stellar aberration, precession and
+     nutation. There is an optional (approximate) correction for atmospheric
+     refraction (Earth only). Azimuth measured North(0) -> East(90) -> 
+     South(180) -> West(270). Elevation is with respect to plane perpendicular
+     to local zenith direction.  TOPOCENTRIC ONLY. Units: DEGREES
+
+        Labels:  Azi_(a-appr)_Elev  (airless)
+                 Azi_(r-appr)_Elev  (refracted)
+
+  5. Rates; AZ & EL
+        The rate of change of target apparent azimuth and elevation (airless). 
+     d(AZ)/dt is multiplied by the cosine of the elevation angle. TOPOCENTRIC 
+     ONLY. Units are ARCSECONDS PER MINUTE.
+
+        Labels:  dAZ*cosE d(ELV)/dt
+
+  6. X & Y satellite offset & position angle
+        Satellite differential coordinates WRT the central body along with the
+     satellite position angle. Differential coordinates are defined in RA as
+          X=[(RA_sat - RA_primary)*COS(DEC_primary)],
+     and in DEC as
+          Y=(DEC_sat-DEC_primary). 
+     Non-Lunar satellites only. "SatPANG" is CCW angle from the North Celestial
+     Pole to a line from planet center to satellite center.
+     Units: ARCSECONDS (X & Y) and DEGREES (position angle)
+
+        Labels:  X_(sat-primary)_Y SatPANG
+
+  7. Local Apparent Sidereal Time
+        The angle measured westward in the body true-equator of-date plane 
+     from the meridian containing the body-fixed observer to the meridian 
+     containing the true Earth equinox (defined by intersection of the true 
+     Earth equator of date with the ecliptic of date). For non-Earth sites,
+     a somewhat different definition is used. The value returned is measured
+     from the observer meridian to the meridian containing the Earth equinox 
+     of the J2000.0 system. TOPOCENTRIC ONLY. Units are HH MM SS.ffff or 
+     decimal hours (HH.ffffffffff) 
+
+        Labels:  L_Ap_Sid_Time
+
+  8. Airmass
+        RELATIVE optical airmass; a measure of extinction. The ratio between
+     the absolute optical airmass at the target's refracted position to the 
+     absolute optical airmass at zenith. Based on work of Kasten and Young 
+     (Applied Optics, vol. 28 no. 22, 15-Nov-1989). AVAILABLE ONLY FOR 
+     TOPOCENTRIC EARTH SITES WITH THE TARGET ABOVE THE HORIZON.  Unitless.
+
+        Labels:  a-mass
+
+  9. Vis mag. & Surf Bright
+        Approximate (apparent) visual magnitude & surface brightness, where
+     surface brightness is the average visual magnitude of a square-arcsecond 
+     of the illuminated portion of the apparent disk). 
+
+     Planets & satellites: Value for Pluto includes Charon. The Sun's altitude 
+      above the Saturn ring-plane is not considered for Saturn.  When the Moon 
+      is at phase angles < 7 deg.  (within 1 day of full), the computed 
+      magnitude tends to be ~ 0.12 too small.  For observing sites not on the 
+      Earth or Moon, planet and satellite magnitudes are not available (but 
+      Sun, comet and asteroid values are). For planets and satellites, values 
+      are available only for solar phase angles in the range generally visible 
+      from Earth. This is to avoid extrapolation of models beyond their valid 
+      (data-based) limits.
+
+     Asteroids & comets: Surface brightness is returned for asteroids only 
+      if a radius is known. Magnitudes are, in principle, accurate to about
+      +/- 0.1 magnitude. However, measurement and calibration issues mean 
+      values should be treated as uncertain at the +/- 1.0 magnitude level. 
+      In practice, for solar phase angles > 90 deg, the error could exceed 
+      1 magnitude. No values are output for phase angles greater than 120 
+      degrees, since the errors could be large and unknown. 
+
+     Units are (none) and VISUAL MAGNITUDES PER SQUARE ARCSECOND.
+
+     Magnitude laws:
+       Sun
+         APmag= M - 5 + 5*log10(d), where M=4.83, d=distance from Sun (parsecs)
+       Asteroids
+         APmag= H + 5*log10(delta) + 5*log10(r) -2.5*log10((1-G)*phi1 + G*phi2)
+       Comets
+         T-mag=M1 + 5*log10(delta) + k1*log10(r)
+         N-mag=M2 + 5*log10(delta) + k2*log10(r) + phcof*beta
+       Chiron:
+         Computed using asteroid magnitude law with H= 6.5, G=0.15
+       Wilson-Harrington
+         Computed using asteroid magnitude law, H= 15.99, G= 0.15
+       Elst-Pizzaro:
+         Computed using asteroid magnitude law, H= 14.0, G= 0.15
+       Encke:
+         T-mag =  M1 + 5*log10(delta) + 2.5*(r**1.8 - 1) 
+         N-mag =  M2 + 5*log10(delta) + k2*log10(r) + phcof*beta
+
+     Surface brightness:
+         S-brt= V + 2.5*log10(k*PI*a*b')
+ 
+        Labels:  APmag S-brt  (Non-comet with known dimensions)
+                 APmag        (Non-comet with unknown dimensions)
+                 T-mag N-mag  (comets; total & nuclear magnitudes)
+
+ 10. Illuminated fraction
+        Portion of target object circular disk illuminated by Sun (phase), 
+     as seen by observer.  Units are PERCENT.
+
+        Labels:  Illu%
+
+ 11. Defect of illumination
+        Angular width of target circular disk diameter not illuminated by Sun. 
+     Available only if target radius is known.  Units are ARCSECONDS.
+
+        Labels:  Def_illu
+
+ 12. Angular separation/visibility
+        The angle between the center of a non-lunar target body and the center
+     of the primary body it revolves around, as seen by the observer. Units are
+     ARCSECONDS.
+ 
+        Non-lunar natural satellite visibility codes (limb-to-limb):
+ 
+      /t = Transitting primary body disk, /O = Occulted by primary body disk,
+      /p = Partial umbral eclipse,        /P = Occulted partial umbral eclipse,
+      /u = Total umbral eclipse,          /U = Occulted total umbral eclipse,
+      /- = Target is the primary body,    /* = None of above ("free and clear")
+ 
+     ... the radius of major bodies is taken to be the equatorial value (max)
+     defined by the IAU2003 system. Atmospheric effects and oblateness aspect
+     are not currently considered in these computations. Light-time is included.
+ 
+        Labels:   ang-sep/v
+
+ 13. Target angular diameter
+        The angle subtended by the disk of the target seen by the observer, if
+     it was fully illuminated. The target diameter is taken to be the IAU2003
+     equatorial diameter.  Oblateness aspect is not currently included. Units 
+     are ARCSECONDS.
+
+        Labels: Ang-diam
+
+ 14. Obs sub-long & sub-lat
+        The planetographic (geodetic) longitude and latitude of the center of 
+     the target disk seen by the observer. Uses the IAU2003 rotation models. 
+     For the gas giants only (Jupiter, Saturn, Uranus and Neptune), these 
+     longitudes are based on the Set III prime meridian angle, referred to the 
+     planet's rotating magnetic field. Latitude is always referred to the body
+     dynamical equator.  Note there can be an offset between the dynamical pole
+     and the magnetic pole.  Units are DEGREES.
+ 
+        Labels: Ob-lon Ob-lat
+
+ 15. Solar sub-long & sub-lat
+        The planetographic (geodetic) longitude and latitude of the center of 
+     the target disk seen by an observer at the center of the Sun. Uses the 
+     IAU2003 rotation models. For the gas giants only (Jupiter, Saturn, Uranus
+     and Neptune), these longitudes are based on the Set III prime meridian 
+     angle, referred to the planet's rotating magnetic field. Latitude is 
+     always referred to the body dynamical equator. Note there can be an offset
+     between the dynamical pole and the magnetic pole. Units are DEGREES.
+
+        Labels: Sl-lon Sl-lat
+
+ 16. Sub Solar Pos. Ang & Dis
+        Target sub-solar point position angle (CCW with respect to direction
+     of true-of-date Celestial North Pole) and angular distance from the 
+     sub-observer point (center of disk) at print time. Negative distance 
+     indicates the sub-solar point is on the hemisphere hidden from the 
+     observer.  Units: DEGREES and ARCSECONDS
+
+        Labels: SN.ang SN.ds
+
+ 17. N. Pole Pos. Ang & Dis 
+        Target's North Pole position angle (CCW with respect to direction of 
+     true-of-date Celestial North Pole) and angular distance from the 
+     sub-observer point (center of disk) at print time. Negative distance 
+     indicates N.P. on hidden hemisphere. Units: DEGREES and ARCSECONDS 
+
+        Labels: NP.ang NP.ds 
+
+ 18. Helio eclip. lon & lat
+        Geometric heliocentric (J2000 or B1950) ecliptic longitude and latitude 
+     of target at the instant light leaves it to be observed at print time 
+     (print time minus 1-way light-time).  Units: DEGREES
+ 
+        Labels: hEcl-Lon hEcl-Lat
+
+ 19. Helio range & range-rate 
+        Heliocentric range ("r", light-time corrected) and range-rate ("rdot") 
+     of the target center or surface point at the instant light seen by the 
+     observer at print-time would have left the target (print-time minus
+     down-leg light-time). The Sun-to-target distance traveled by a ray of 
+     light emanating from the center of the Sun that reaches the target at 
+     some instant and is recordable by the observer one down-leg light-time 
+     later at print-time.  Units: AU and KM/S
+
+        Labels:    r       rdot
+
+ 20. Observer range & range rate 
+        Range ("delta") and range-rate ("delta-dot") of the target center or 
+     surface point with respect to the observer at the instant light seen by 
+     the observer at print-time would have left the target (print-time minus 
+     down-leg light-time); the distance traveled by a light ray emanating
+     from the the target and recorded by the observer at print-time. "deldot" 
+     is a projection of the velocity vector along this ray, the 
+     light-time-corrected line-of-sight from the coordinate center, and 
+     indicates relative motion. A positive "deldot" means the target is moving 
+     away from the observer (coordinate center). A negative "deldot" means the 
+     target s moving toward the observer. Units are AU or KM and KM/S 
+
+        Labels:   delta  deldot
+
+ 21. One-Way Light-time
+        Target 1-way light-time, as seen by observer. The elapsed time since 
+     light (observed at print-time) left or reflected off the target. 
+     Units are MINUTES
+
+        Labels:  1-way_LT
+
+ 22. Speed wrt Sun & obsrvr
+        Magnitude of velocity of target with respect to the Sun center and the
+     observer at the time light left the target to be observed. Units are KM/S. 
+
+        Labels:  VmagSn VmagOb
+
+ 23. Sun-Observer-Target angle
+        Target's apparent solar elongation seen from observer location at
+     print-time.  If negative, the target center is behind the Sun. Units 
+     are DEGREES.
+
+        For observing centers with defined rotation models, an additional
+     marker is output under the column labelled '/r' (for relative position).
+     If there is no rotation model associated with the observing center, 
+     no /r column will be present. Under this column,
+
+            /T indicates target trails Sun (evening sky) 
+            /L indicates target leads Sun  (morning sky)
+ 
+        NOTE: The S-O-T solar elongation angle is the total separation in any
+     direction. It does not indicate the angle of Sun leading or trailing.
+ 
+        Labels: S-O-T /r
+ 
+ 24. Sun-Target-Observer angle
+        Target's apparent PHASE ANGLE as seen from observer location at print
+     time. Units are DEGREES.
+ 
+        Labels: S-T-O
+ 
+ 25. Target-Observer-Moon (or Interfering_Body) / Illum%
+        Apparent elongation angle, seen by the observer, between the target 
+     body center and the center of a potential visually interfering body (such 
+     as the Moon but, more generally, the largest body in the system except for
+     the one the observer is on). Also output is the fraction of the lunar (or 
+     IB) disk that is illuminated by the Sun. A negative elongation angle 
+     indicates the target center is behind the interfering body. The specific
+     interfering body for an observing site is given in the output header.
+     Units are DEGREES and PERCENT.
+
+        Labels: T-O-M/Illu%   (Earth observer, 'M' denoting "Moon")
+                T-O-I/Illu%   (Non-Earth observer)
+ 
+ 26. Observer-Primary-Target angle
+       Apparent angle between a target satellite, its primary's center and
+     an observer at print time. Units: DEGREES
+ 
+        Labels: O-P-T
+
+ 27. Pos. Ang; radius & -vel 
+        The position angles of the extended Sun->target radius vector
+     ("PsAng") and the negative of the target's heliocentric velocity vector 
+     ("PsAMV"), as seen in the plane-of-sky of the observer, measured CCW 
+     from reference frame North Celestial Pole. Small-bodies only. 
+     Units are DEGREES. 
+
+        Labels: PsAng PsAMV
+
+ 28.  Orbit Plane Angle
+        Angle between observer and target orbital plane, measured from center
+      of target at the moment light seen at observation time leaves the target.
+      Positive values indicate observer is above the object's orbital plane,
+      in the direction of reference frame +z axis.  Small-bodies only.   
+      Units: DEGREES.
+
+        Labels:  PlAng
+
+ 29.  Constellation ID
+        The 3-letter abbreviation for the constellation name of target's 
+      astrometric position, as defined by the IAU (1930) boundary delineation.
+ 
+        Labels: Cnst
+
+ 30.  CT-UT =
+        Difference between uniform Coordinate Time scale ("ephemeris time") and 
+     Earth-rotation dependent Universal Time. Prior to 1962, the difference is 
+     with respect to UT1 (CT-UT1). For 1962 and later, the delta is with 
+     respect to UTC (CT-UTC).  Values beyond the next July or January 1st may 
+     change if a leap-second is introduced at later date. Units:SECONDS
+ 
+        Labels: CT-UT
+
+ 31. Observer Ecliptic Longitude & Latitude
+       Observer-centered ecliptic-of-date longitude and latitude of 
+     the target's apparent position, corrected for light-time, the 
+     gravitational deflection of light and stellar aberration. The ecliptic 
+     plane is the Earth's orbital plane at print time.  Units: DEGREES
+ 
+        Labels: ObsEcLng    ObsEcLat
+
+ 32. Target North Pole RA & DEC
+        Right Ascension and Declination (IAU2003 rotation model) of target 
+     body's North Pole direction at the time light left the body to be 
+     observed at print time. Consistent with requested reference frame; 
+     ICRF/J2000.0 or FK4/B1950.0 RA and DEC.  Units: DEGREES.
+
+        Labels: N.Pole-RA  N.Pole-DC 
+
+ 33. Galactic Latitude
+        Observer-centered Galactic System II (post WW II) latitude of the 
+     target's apparent position (corrected for light-time, stellar aberration, 
+     precession, nutation and the deflection of light due to the Sun and 
+     the most massive body in the planet's system). Units: DEGREES
+
+        Labels: GlxLat
+
+ 34. Local Apparent Solar Time
+        Local Apparent SOLAR Time at observing site. TOPOCENTRIC ONLY.
+     Units are HH.fffffffffff (decimal hours) or HH MM SS.ffff
+
+ 35. Earth to Site Light-time
+        Instantaneous light-time of the station with respect to Earth center 
+     at print-time. The geometric (or "true") separation of site and Earth 
+     center, divided by the speed of light.  Units: MINUTES
+
+        Labels: 399_ins_LT
+
+ 36. Plane-of-sky RA and DEC pointing uncertainty
+        Uncertainty in Right-Ascension and Declination. Output values are the 
+     formal +/- 3 standard-deviations (sigmas) around nominal position. 
+     Units: ARCSECONDS
+
+        Labels: RA_3sigma DEC_3sigma
+ 
+ 37. Plane-of-sky error ellipse
+        Plane-of-sky (POS) error ellipse data. These quantities summarize the
+     target's 3-dimensional 3-standard-deviation formal uncertainty volume 
+     projected into a reference plane perpendicular to the observer's 
+     line-of-sight.
+
+        Labels:
+
+         SMAA_3sig = Angular width of the 3-sigma error ellipse semi-major
+                      axis in POS. Units: ARCSECONDS.
+
+         SMIA_3sig = Angular width of the 3-sigma error ellipse semi-minor
+                      axis in POS. Units: ARCSECONDS.
+
+         Theta     = Orientation angle of the error ellipse in POS; the
+                      clockwise angle from the direction of increasing RA to
+                      the semi-major axis of the error ellipse, in the
+                      direction of increasing DEC.  Units: DEGREES.
+
+         Area_3sig = Area of sky enclosed by the 3-sigma error ellipse.
+                      Units: ARCSECONDS ^ 2.
+
+ 38. Plane-of-sky ellipse RSS pointing uncertainty
+       The Root-Sum-of-Squares (RSS) of the 3-standard deviation plane-of-sky 
+     error ellipse major and minor axes.  This single pointing uncertainty 
+     number gives an angular distance (a circular radius) from the target's 
+     nominal position in the sky that encompasses the error-ellipse. 
+     Units: ARCSECONDS.
+
+       Labels: POS_3sigma
+
+ 39. Uncertainties in plane-of-sky radial direction
+       Range and range rate (radial velocity) formal 3-standard-deviation
+     uncertainties.  Units: KM, KM/S
+
+       Labels: RNG_3sigma RNGRT_3sig
+ 
+ 40. Radar uncertainties (plane-of-sky radial direction)
+       Doppler radar uncertainties at S-band (2380 MHz) and X-band (8560 MHz)
+     frequencies, along with the round-trip (total) delay to first-order.
+     Units: HERTZ and SECONDS
+
+       Labels: DOP_S-sig  DOP_X-sig  RT_delay-sig
+===============================================================================
+                           CLOSE-APPROACH TABLES
+
+  For asteroids and comets, a close-approach table may be requested. Output 
+is produced only when the selected object reaches a minimum distance within a
+set spherical radius from a planet, Ceres, Pallas, or Vesta.
+  
+  User-specifications for this table can include the time-span to check, the 
+radius of detection for planets and asteroids, the maximum uncertainty in 
+time-of-close-approach before the table is automatically cut-off, and whether
+to output optional error ellipse information projected into the B-plane
+
+  The B-plane mentioned above is defined by the three orthogonal unit vectors 
+T, R, and S (the origin being the body center). T lies in the B-plane, pointing
+in the direction of decreasing celestial longitude. R lies in the B-plane, 
+pointing in the direction of decreasing celestial latitude (south). S is 
+directed along the relative velocity vector at body encounter, perpendicular 
+to the B-plane, and thus R and T. The B vector is the vector in the plane from 
+the body to the point where the incoming object's velocity asymptote pierces 
+the R-T plane. Note the B-plane is defined only when the incoming object is 
+hyperbolic with respect to the body.
+
+  For objects with covariances, statistical quantities are output for each
+close-approach. All tabulated statistical quantities (MinDist, MaxDist, TCA3Sg,
+Nsigs and P_i/p) are based on a linearized covariance mapping in which 
+higher-order (small) terms in the variational partial derivatives of the 
+equations of motion are dropped. 
+
+  Due to possible non-linearities in any given object's actual dynamics, this 
+can result in significant errors at epochs distant in time from the solution 
+epoch.  Consequently, long linearized mappings (thousands, or hundreds, or 
+sometimes just dozens of years from the present time) should be considered 
+approximate, pending additional analysis, especially in these cases:
+
+           A) objects with numerous close planetary encounters (dozens), 
+           B) objects with very close planetary encounters (< 0.01 AU),
+           C) objects with very short data arcs (days or weeks).
+
+  While linearized projections will tend to indicate such cases with obviously
+rapid uncertainty growth, the specific numbers output can tend to understate 
+orbit uncertainty knowledge. 
+
+  Possible output quantities are described below. "Nominal" effectively means 
+"highest-probability for the given orbit solution", although there can be other
+possible orbits of equal probability. If there is no covariance, no statistical
+quantities are returned.
+
+ Date (CT) =
+   Nominal close-approach date (Coordinate Time). Calendar dates prior to 
+1582-Oct-15 are in the Julian calendar system.  Later calendar dates are 
+in the Gregorian system.
+
+ Body =
+   Name or abbreviation of the planetary body or major asteroid being
+closely approached by the selected small-body.
+
+ CA Dist =
+   Nominal close-approach distance at the close-approach time. Units: AU
+
+ MinDist = 
+   Minimum close-approach distance possible (formal 3 standard-deviations 
+with linearized covariance mapping). Units: AU
+
+ MaxDist =
+   Maximum close-approach distance possible (formal 3 standard-deviations
+with linearized covariance mapping). Units: AU
+
+ Vrel =
+   Relative velocity of the object and the body it is approaching at the
+nominal time of close-approach. Units: KM/S
+
+ TCA3Sg =
+   Close-approach-time 3-standard deviation uncertainty.  Units: MINUTES
+
+ SMaA   =
+   3-sigma error ellipse semi-major axis projected into the B-plane at nominal
+time of closest-approach. Units: KM
+
+ SMiA   =
+   3-sigma error ellipse semi-minor axis projected into the B-plane at nominal
+time of closest-approach. Units: KM
+
+ Gamma  =
+   Orientation angle of error ellipse in the B-plane. Counter-clockwise 
+angle from the B vector to the semi-major axis of the error ellipse. 
+Units: DEGREES 
+
+ Nsigs  =
+   The number of standard deviations (sigmas) required for the error ellipse 
+to intersect the body being closely approached. Units: STANDARD DEVIATIONS
+
+ P_i/p  =
+   Linearized probability of the object impacting the body.
+
+===============================================================================
+                UNDERSTANDING RISE, TRANSIT AND SET INDICATORS
+
+    There are 2 ways the system can be used to mark rise, transit and set (RTS)
+conditions: activate the RTS-only print option OR produce a general observer 
+table with step-size less than 30 minutes.
+
+NORMAL_TABLE RTS-MARKER MODE
+
+    RTS is indicated automatically during normal observer table generation,
+when the step-size is less than 30 minutes. Markers are placed to indicate
+the event occurred at some point in the previous step. Thus, precision of the 
+indicator depends on the step-size selected. For this mode, rise and set are 
+always with respect to the true-visual-horizon reference plane (TVH), described
+below.
+
+RTS-ONLY PRINT MODE 
+
+    The advantage of this mode is it allows production of a more compact RTS 
+table over a longer time-span than does the "normal" table generation mode.
+
+    When RTS-only print is selected, the program will search for the events at 
+a user-specified resolution, from 1 to 9 minutes. Output will be generated ONLY
+for these three events. The marker symbols in the table indicate that the 
+event took place sometime in the previous step interval. 
+
+    This RTS-only mode can be turned on at two different points in the program:
+         #1) Preferably, when specifying the ephemeris/search step-size
+         #2) ... but also in the "change defaults" prompt structure
+
+    Three types of criteria are available for the rise and set conditions,
+relative to an input elevation angle (nominally 0 degrees). Select by 
+specifying, when prompted at #1 or #2, one of these symbols:
+ 
+        TVH ... True visual horizon plane. The horizon seen by an observer on 
+                  the reference ellipsoid. Allows for horizon dip effect and 
+                  refraction, but not local topography.
+        GEO ... Geometric horizon plane. The horizon is defined by the plane 
+                  perpendicular to the reference ellipsoid local zenith (no 
+                  horizon dip).  Refraction is allowed for.
+        RAD ... Radar case. Geometric horizon plane, no refraction.
+
+    For example, when prompted for the step-size, one could enter "5 min GEO'
+to search, at five-minute steps, for the refracted rise/set relative to the 
+geometric horizon.
+
+BACKGROUND DESCRIPTION
+
+    Rise and set elevations are taken to be the maximum of 0 or the input
+elevation cut-off value [0-90 deg], set in the "change defaults" prompt 
+section. Thus, if there are local hills, one could set the cut-off at 10 
+degrees and get RTS relative to that elevation.
+
+    At low elevations, these rise/set times should be viewed as approximations,
+realistically good to perhaps only 1-2 minutes at the horizon due to local 
+atmospheric variation and topography. 
+
+    To speed RTS-only searches, use the largest step-size compatible with the 
+required accuracy. For example, considering the inherent atmospheric 
+instability at the horizon, one should rarely need to identify rise/set to 
+better than 5 minute accuracy. Setting a search-step of 5 minutes will then 
+produce a table 5 times faster than 1 minute searching. 
+
+    The program computes approximate refraction angles assuming yellow-light 
+observations at 10 deg C sea-level with pressure of 1010 millibars. Corrected 
+coordinates should be accurate to < 10 arcsec, but errors may be much larger 
+near the horizon (+- 0.3 deg) or fluctuate unpredictably with local weather. 
+
+    Both Moon and Sun rise/set are based on when the refracted upper limb
+of the object reaches the specified elevation. Transit is based on the center
+of the target body.
+
+===============================================================================
+                         CONSTELLATION IDENTIFICATION
+ 
+   One output value that may be requested for an observer table is the
+constellation it is observed to be in (corrected for light-time). The output
+field will contain a three letter abbreviation of the constellation name, from
+the list shown below.
+ 
+   Constellation boundaries are those delineated by Gould (1877) and
+Delporte (1930) under the auspices of the International Astronomical Union.
+ 
+        _______________________________________________________________
+       | Abbrev. | Constellation Name | | Abbrev. | Constellation Name |
+       |_________|____________________|_|_________|____________________|
+       | And     | Andromeda          | | Leo     | Leo                |
+       | Ant     | Antila             | | LMi     | Leo Minor          |
+       | Aps     | Apus               | | Lep     | Lepus              |
+       | Aqr     | Aquarius           | | Lib     | Libra              |
+       | Aql     | Aquila             | | Lup     | Lupus              |
+       | Ara     | Ara                | | Lyn     | Lynx               |
+       | Ari     | Aries              | | Lyr     | Lyra               |
+       | Aur     | Auriga             | | Men     | Mensa              |
+       | Boo     | Bootes             | | Mic     | Microscopium       |
+       | Cae     | Caelum             | | Mon     | Monoceros          |
+       | Cam     | Camelopardis       | | Mus     | Musca              |
+       | Cnc     | Cancer             | | Nor     | Norma              |
+       | CVn     | Canes Venatici     | | Oct     | Octans             |
+       | CMa     | Canis Major        | | Oph     | Ophiuchus          |
+       | CMi     | Canis Minor        | | Ori     | Orion              |
+       | Cap     | Capricornus        | | Pav     | Pavo               |
+       | Car     | Carina             | | Peg     | Pegasus            |
+       | Cas     | Cassiopeia         | | Per     | Perseus            |
+       | Cen     | Centaurus          | | Phe     | Phoenix            |
+       | Cep     | Cepheus            | | Pic     | Pictor             |
+       | Cet     | Cetus              | | Psc     | Pisces             |
+       | Cha     | Chamaeleon         | | PsA     | Pisces Austrinus   |
+       | Cir     | Circinus           | | Pup     | Puppis             |
+       | Col     | Columba            | | Pyx     | Pyxis              |
+       | Com     | Coma Berenices     | | Ret     | Reticulum          |
+       | CrA     | Corona Australis   | | Sge     | Sagitta            |
+       | CrB     | Corona Borealis    | | Sgr     | Sagittarius        |
+       | Crv     | Corvus             | | Sco     | Scorpius           |
+       | Crt     | Crater             | | Scl     | Sculptor           |
+       | Cru     | Crux               | | Sct     | Scutum             |
+       | Cyg     | Cygnus             | | Ser     | Serpens            |
+       | Del     | Delphinus          | | Sex     | Sextans            |
+       | Dor     | Dorado             | | Tau     | Taurus             |
+       | Dra     | Draco              | | Tel     | Telescopium        |
+       | Equ     | Equuleus           | | Tri     | Triangulum         |
+       | Eri     | Eridanus           | | TrA     | Triangulum Australe|
+       | For     | Fornax             | | Tuc     | Tucana             |
+       | Gem     | Gemini             | | UMa     | Ursa Major         |
+       | Gru     | Grus               | | UMi     | Ursa Minor         |
+       | Her     | Hercules           | | Vel     | Vela               |
+       | Hor     | Horologium         | | Vir     | Virgo              |
+       | Hya     | Hydra              | | Vol     | Volans             |
+       | Hyi     | Hydrus             | | Vul     | Vulpecula          |
+       | Ind     | Indus              | |         |                    |
+       | Lac     | Lacerta            | |         |                    |
+       |_________|____________________|_|_________|____________________|
+===============================================================================
+                             SPK File Generation            
+
+ Introduction:
+ -------------
+
+   An SPK file is a binary file which may be smoothly interpolated to retrieve
+an object's position and velocity at any instant within the file time-span.
+Such files may be used as input to visualization and mission design programs, 
+allowing them to quickly retrieve accurate target body observation and data
+analysis ephemerides without having to repeatedly integrate equations of 
+motion.   An SPK file could be considered a "recording" of the integrator.
+
+   SPK stands for "Spacecraft and Planet Kernel". It is a file element of the 
+SPICE system devised and maintained by the NAIF (Navigation and Ancillary 
+Information Facility) team at JPL. SPK files may hold ephemerides for any kind
+of spacecraft, vehicle or solar system body, but the SPK files produced by
+Horizons are only for comets and asteroids.
+
+   Potential users are advised that programming and science/math skills at an 
+advanced college level are needed to utilize these files. Users must have a 
+computer with 25-50 Mbytes of disk space, 8 Mbytes of available RAM and a 
+FORTRAN or C compiler. The user's own code must be capable of calling FORTRAN 
+or C modules. Internet FTP capability is needed to obtain the necessary SPICE 
+components as well as the SPK files generated by Horizons.  
+
+   For information on SPK files in general, contact
+ 
+               Charles.H.Acton-Jr@jpl.nasa.gov (NAIF Team Leader)
+ 
+   or see web site "http://pds-naif.jpl.nasa.gov/".
+
+ Horizons Implementation:
+ ------------------------
+
+ IMPORTANT:
+
+   These informal file releases should not be used for "category A" flight 
+   project purposes (involving the safety and success of spacecraft hardware 
+   and mission) without first contacting ... 
+
+              Donald.K.Yeomans@jpl.nasa.gov 
+              Supervisor, Solar System Dynamics Group, 818-354-2127
+ 
+   A particular object's orbit may be insufficiently well-determined, over the
+   chosen time-span, to be suitable for some high-precision purposes.
+
+ Background:
+ -----------
+
+   SPK files can be produced only with the telnet interface. Horizons allows a
+maximum of 20 small-bodies per SPK file. To construct an SPK for a comet or 
+asteroid, Horizons integrates the object's trajectory over a user-specified 
+time span greater than 32 days, but less than 200 years. The position 
+components, at discrete steps, over some interval, are fit to a series of 
+Chebyshev polynomials. When a users' application program reads the SPK file,
+the appropriate polynomials are accessed and interpolated to retrieve the
+requested state. 
+
+   SPK files are capable of storing trajectory data with a fidelity greater 
+than 1 millimeter (more accurately than should ever be required). In practice, 
+it is the Chebyshev fit that determines how closely the SPK interpolation 
+matches the integrator. The typical trade-off is that higher fidelity SPK files
+are obtained by fitting higher degree polynomials to smaller time intervals.
+The cost for increased accuracy is larger file size.
+   
+ File Fidelity:
+ --------------
+
+   Choosing the best way to represent a trajectory in a file is complicated
+by the wide range of small-body orbits and anomalies such as close-approaches
+to major planets.  Horizons seeks to strike a rough balance between file 
+size and file fidelity, valuing fidelity more than file size. 
+
+   Prior to the integration, a default mesh (state vector interval) is selected
+for the polynomial fits.  There is the "loose" mesh for main-belt objects 
+(eccentricity less than 0.35, semi-major axis greater than 2.3 AU). This covers
+the majority of objects. Integrator states are preserved to the meter level or 
+less (1-sigma) for most objects.
+
+   There is a "standard mesh" that will fit all but a few objects well; 
+close-approaches are described accurately to the 10-50 meter range and < 1 
+meter at other times. File sizes are 4 times larger than "loose" mesh objects.
+
+   Finally, for a few objects, a "tight" mesh will be necessary. File sizes
+are 4x larger than "standard", 16x larger than "loose". 
+
+   Mesh assignment is automatic, but not all cases requiring a tight mesh can 
+be detected in advance (which is why this is being discussed). At the end of 
+an integration, a summary of polynomial fit maximum errors is displayed: 
+
+         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         A-posteriori SPK fidelity estimate (rel. to integrator):
+              Max. error (3 std. dev)           Time
+              ------------------------ ------------------------
+           X: 0.7104212997280315D-03 m 1998-May-09 12:00:00.000 
+           Y: 0.1287005692494599D-02 m 1998-May-09 12:00:00.000 
+           Z: 0.7502616895491441D-03 m 1998-May-09 12:00:00.000 
+         RSS: 0.1650446811753079D-02 m 1998-May-09 12:00:00.000 
+         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   This shows the maximum three standard deviation error detected in the 
+Chebyshev fit to the integrator position vector components. The maximum 
+root-sum-square (RSS) of component error is also shown. If the error from the 
+default mesh selection is too large for your application, contact 
+
+                       Jon.D.Giorgini@jpl.nasa.gov  
+
+for instructions on forcing Horizons to a tighter mesh and improving fidelity. 
+
+   The above data, along with other summary information, is stored in the SPK
+file comment area. It can be read using the "spacit" or "commnt" utility in 
+the SPICE Toolkit distribution.
+
+ Transferring SPK files:
+ ----------------------
+   Within the Horizons system, SPK files are created as binary files on a Sun 
+ UltraSparc/UNIX platform. These files can be used on several popular 
+ platforms, but may be unreadable on others. Reasons for this include:
+ 
+            1) Data-type representation (machine word-size) 
+            2) Floating point representations (IEEE or not)
+            3) Byte order (least significant byte first vs. last)
+ 
+   If you are using a verion of the SPICE Toolkit higher than 52, you will
+ be able to directly read Horizons binary files on any platform. If not, the 
+ machine you intend to use the SPK file on thus falls into one of two possible 
+ categories:
+
+ Compatible systems:
+ -------------------
+   If your system has 32-bit words, IEEE floating-point, and is "big-endian" 
+ (stores highest order byte first) like the Sun UltraSparc, you will be able to
+ use Horizons-generated binary SPK files directly; respond "no" to the 
+ "transfer format" prompt and use the binary mode of FTP to retrieve the file. 
+ Known compatible machines are the HP 9000 series, Motorola 68K series 
+ (MacIntosh), Silicon Graphics and NeXT, among others. 
+     
+ Incompatible systems:
+ ---------------------
+    Known incompatible machines would be the Intel series (80486, Pentium, 
+ etc.), DEC Alpha and VAX which have reversed byte-orders and/or non-IEEE 
+ floating-point. To obtain an SPK for one of these platforms, respond "yes" 
+ to the "transfer format" prompt.  The binary file will be converted to a
+ transfer file. Once you FTP this file to your system, using FTP ASCII mode,
+ you MUST run the program 'spacit' or 'tobin' (included in your SPICE Toolkit) 
+ to produce a binary-compatible SPK for your machine. 
+
+===============================================================================
+                     STATEMENT OF EPHEMERIS LIMITATIONS 
+
+     To produce an ephemeris, observational data (optical, VLBI, radar & 
+spacecraft) containing measurement errors are combined with dynamical models 
+containing modeling imprecisions.  A best fit is developed to statistically 
+minimize those errors. The resulting ephemeris has an associated uncertainty 
+that fluctuates with time.  
+
+     For example, only a limited percentage of asteroid orbits are known to 
+better than 1 arcsec in the plane-of-sky over significant periods of time. 
+While 1991 JX center-of-mass was known to within 30 meters along the 
+line-of-sight during the 1995 Goldstone radar experiment, errors increase 
+outside that time-span. Uncertainties in major planet ephemerides range from 
+10cm to 100+ km in the state-of-the-art JPL/DE-405 ephemeris, used as the basis
+for spacecraft navigation, mission planning and radar astronomy.
+
+     Cartesian state vectors are output in all their 16 decimal-place glory.  
+This does not mean all digits are physically meaningful. The full-precision 
+may be of interest to those studying the ephemerides or as a source of initial 
+conditions for subsequent integrations.
+
+     On top of this basic uncertainty, for osculating element output, GM is 
+rarely known to better than 5 significant figures. 
+
+     For observer angular output tables, purely local atmospheric conditions 
+will affect "refraction-corrected" apparent places by several arcseconds, 
+more at the horizon.
+
+     Small-body elements are reported in the optical frame (i.e. FK5/J2000.0). 
+This frame is currently thought to differ by no more than 0.01 arcseconds from 
+the ICRF of the planetary ephemeris DE-405. Until a generally agreed upon 
+transformation from one frame to the other is defined and implemented, they 
+will be treated by this program as being the same.
+
+     The Earth is assumed to be a rigid body and solid Earth tides affecting
+station location are not included. Of course, precession and nutation effects 
+are included, as is polar motion. CT-TAI terms less than 20 usec are omitted. 
+These and other Earth-model approximations result in topocentric station 
+location errors, with respect to the reference ellipsoid, of less than 
+20 meters.  However, many optical site positions (latitude and longitude) are 
+known far less accurately and can be many kilometers off.  
+
+     Relativistic effects are included in all planet, lunar and small body
+dynamics, excluding satellites. Relativity is included in observables via 2nd 
+order terms in stellar aberration and the deflection of light due to gravity 
+fields of the Sun (and Earth, for topocentric observers).
+
+     Deflections due to other gravity fields can potentially have an effect at
+the 10^-4 arcsec level but are not currently included here. Satellites of
+other planets, such as Jupiter could experience deflections at the 10^-3 arcsec
+level as well.  Light time iterations are Newtonian. This affects light-time 
+convergence at the millisecond level, position at ~10^-6 arcsec level.
+
+     For many small natural satellites, the orbit orientation is well known,
+but the position of the body along the ellipse is not. Errors may be 
+significant, especially for the lesser satellites of outer planets. Satellite 
+osculating elements output by Horizons should NOT be used to initialize a 
+separate integration or extrapolation. Such elements assume Keplerian motion 
+(two point masses, etc.) which does not match, for example, kinematic models 
+such as a precessing ellipse, used for some satellites. One would do better 
+extrapolating mean orbital elements at http://ssd.jpl.nasa.gov/sat_elem.html
+
+     IF YOUR CAREER OR SPACECRAFT DEPENDS ON A NON-LUNAR NATURAL SATELLITE OR 
+SMALL-BODY EPHEMERIS, CONTACT JPL BEFORE USING IT. YOU >MUST< HAVE ADDITIONAL
+INFORMATION TO CORRECTLY UNDERSTAND EPHEMERIS LIMITATIONS AND UNCERTAINTIES.
+
+===============================================================================
+                             LONG-TERM EPHEMERIS
+
+SOLAR SYSTEM MODEL:
+
+     The JPL DE-406/LE-406 extended ephemeris covers the interval from 
+3000 B.C. to A.D. 3000. This ephemeris is identical to the shorter DE-405 in 
+the sense it is the same data-fit (solution) and the same numerical integration
+as DE-405.  However, it has been stored with slightly less accuracy to reduce 
+its size.
+
+     For the Moon, DE-406 recovers the original integrator state to within 
+1 meter, other bodies within 25 meters (maximum error). This difference can be 
+less than the uncertainty associated with the trajectory solution itself, thus
+is insignificant for all but the most specialized circumstances. The short-span
+version, DE-405, recovers the integrator state to the millimeter level.
+
+     Horizons uses the long-term DE-406/LE-406 for the following objects:
+
+            Objects                      ID code #
+            ---------------------------  -------------------
+            All planet barycenters       0,1,2,3,4,5,6,7,8,9 
+            Sun                          10 
+            Moon                         301 
+            Mercury                      199
+            Venus                        299
+            Earth                        399
+            Mars                         499
+
+    Satellites and outer solar-system planet-centers each have various
+shorter intervals, as warranted by their observational data arc.  Comets and 
+asteroids are available only over the A.D. 1599 to A.D. 2200 interval of the 
+DE-405 ephemeris they are integrated against. (Only a few dozen small-bodies
+have sufficiently well-known orbits to justify rigorous integration over 
+time-spans of hundreds of years.) 
+
+PRECESSION MODEL:
+  
+    For the time-span of 1799-Jan-1 to 2202-Jan-1, the official IAU precession
+model [16] of Lieske is used. As published, this model is valid for only ~200
+years on either side of the J2000.0 epoch. This is due to round-off error in
+the published coefficients and truncation to a 3rd order polynomial in the
+expressions for the Euler rotation angles.  Therefore, outside this interval, 
+the long-term precession and obliquity model [17] of Owen is used to maintain 
+accuracy in the calculation of apparent ("of-date") quantities.
+
+    This model is a rigorous numerical integration of the equations of motion
+of the celestial pole using Kinoshita's model for the speed of luni-solar
+precession.
+
+NUTATION MODEL:
+
+    The IAU (1980) model [18] of Wahr is used. This is the same table printed 
+in the 1992 Explanatory Supplement to the Astronomical Almanac. Note there is 
+an error in the Explanatory Supplement for the Node term, given on p. 114 as:
+
+                        OMEGA = 135deg 2'40.280" + ...
+
+This system uses the correct formulation:
+
+                        OMEGA = 125deg 2'40.280" + ... 
+
+
+UNIVERSAL TIME (CT -> UT Conversion):
+
+   This program internally uses the CT time-scale of the ephemerides (the 
+independent variable in the equations of motion). To produce the more familiar 
+Universal Time (UT) output tied to the Earth's rotation, it is necessary to 
+use historical reconstructions of old or ancient observations of constrained 
+events, such as eclipses, to derive a CT-UT difference. This program currently 
+uses the analyses of [12-15] as follows:
+
+    Span                   CT-UT offset  ("delta-t")   Type Argument (T=...)
+    ---------------------  -------------------------- ----- -------------------
+    3000 BC to  500 BC     (31*T*T) - 20                UT1 cent. since JD1820
+    500 BC  to AD 1620     Stephenson cubic spline fit 
+    AD 1620 to AD 1962     Smoothed table               UT1
+    AD 1962 to Present     EOP file                     UTC
+
+   Values prior to 1962 above are adjusted for compatibility with the Horizons 
+planetary ephmeris lunar tidal acceleration (n_dot) of -25.7 "/century^2 as 
+follows:
+
+  delta_(CT-UTC) = -0.911*(n_dot + 26)*T*T, where T =  (year - 1955.5) / 100
+ 
+        For epochs after 1962, the calculation is as follows:
+
+                  CT - UTC = (CT - TAI) + (TAI - UTC)
+... where
+         
+          CT  - TAI = 32.184 + 1.657E-3 * SIN( M + 0.01671*SIN(M) )
+                  M = 6.239996 +  T * 1.99096871E-7
+                  T = CT or TAI seconds past J2000.0 epoch
+
+          TAI - UTC = interpolated from current EOP file.
+
+... dropping terms less than about 20 usec in CT-TAI.
+
+    As one progresses to earlier times, particularly those prior to the
+1620 telescopic data span, uncertainties in UT determination generally 
+(though not always and not uniformly) increase due to less precise 
+observations and sparser records. At A.D. 948, uncertainty (not necessarily 
+error) can be a few minutes.  At 3000 B.C., the uncertainty in UT is about 
+4 hours.  The TT time scale, being uniform, does not have this uncertainty, 
+but is not directly related to Earth's rotation (local time) either. 
+
+GREENWICH MEAN SIDEREAL TIME:
+
+    GMST, used for topocentric ephemerides, is related to UT1 using an 
+expression consistent with the IAU 1976 system of constants, as shown 
+on p. 50 of the Explanatory Supplement (1992), along with the new more 
+accurate 1997 IAU equinox equation.
+
+HIGH PRECISION EARTH ORIENTATION PARAMETER (EOP) MODEL
+ 
+    The EOP file is currently updated twice a week based on GPS and other 
+Earth-monitoring measurements. Horizons uses it to obtain calibrations for 
+UT1-UTC, polar motion and nutation correction parameters necessary to determine
+the rotation from the Earth-fixed reference frame to an inertial reference 
+frame. The EOP file provides data from 1962 to the present, with predictions 
+about 78 days into the future from the date of file release. For times outside 
+the available interval, Horizons uses the last value available in the file as 
+constants.  For CT-UT calculations, it switches to the different models 
+described above.
+
+    Because EOP values are fit to data, it is possible an ephemeris may differ 
+slightly from one produced days or weeks or months later, especially, if the 
+original ephemeris extended into the predicted region of the EOP file. The most 
+recent ephemeris will be more accurate, but if it is necessary to reproduce 
+results exactly, contact JPL. EOP files are archived and the one used in your 
+initial run (indicated in your output) can be retrieved. Generally, any numeric
+change will be very small and almost always negligible in a practical sense.
+
+BODY ROTATIONS:
+   
+    The current IAU rotational models for the planets and satellites are
+simply extended in time as necessary. 
+
+===============================================================================
+                                  BACKGROUND
+
+   A) Comet and asteroid orbits are INTEGRATED from initial conditions stored
+      in the JPL-maintained DASTCOM database.
+
+   B) Planet and satellite ephemerides are INTERPOLATED from files previously
+      generated by JPL, such as the DE-405 (or higher) planetary ephemeris.
+
+   C) SMALL BODY DATA SCREENS are from the JPL DASTCOM database. These display
+      constants ARE ACTUALLY USED to produce the ephemeris.
+
+   D) MAJOR BODY DATA SCREEN CONSTANTS are from "Astrometric and Geometric
+      Properties of Earth and the Solar System", Charles Yoder (JPL), published
+      in "Global Earth Physics: A Handbook of Physical Constants", AGU
+      Reference Shelf 1.
+
+   E) MAJOR BODY DATA SCREEN CONSTANTS are presented for your information (FYI)
+      only and ARE NOT USED to generate the ephemeris output (see below). While
+      an effort has been made to insure their accuracy, suitability of these
+      DISPLAY constants for any given purpose must be determined by individual
+      users.   Users should be aware there is often more than one determination
+      in the literature for many of these constants and that they are subject
+      to revision as more data are accumulated.
+
+   F) Horizons uses the current planetary ephemeris solved-for GM values when 
+      calculating osculating elements. For DE-405/DE-406, they are as follows 
+      (units are KM^3/SEC^2):
+
+                        Sun              1.3271244001798698E+11
+                        Mercury          2.2032080486417923E+04
+                        Venus            3.2485859882645978E+05
+                        Earth            3.9860043289693922E+05
+                        Moon             4.9028005821477636E+03
+                        Mars System      4.2828314258067119E+04
+                        Jupiter System   1.2671276785779600E+08
+                        Saturn System    3.7940626061137281E+07
+                        Uranus System    5.7945490070718741E+06
+                        Neptune System   6.8365340638792608E+06
+                        Pluto System     9.8160088770700440E+02 
+
+===============================================================================
+                SOURCES AND REFERENCES FOR PRIMARY EPHEMERIS DATA
+
+
+Planets
+
+Standish, E.M., XX Newhall, J.G. Williams, and W.M. Folkner.  JPL
+Planetary and Lunar Ephemerides, DE403/LE403.  JPL Interoffice
+Memorandum 314.10-127 dated May 22, 1995.
+
+
+Natural Satellites
+                                               Ephemeris
+Satellite            Theory                    References
+-----------------    ---------------------     ----------------------
+
+Phobos & Deimos      MARSAT (Analytic)         Jacobson et al. (1989)
+
+Galileans            GALSAT(E5, Analytic)      Lieske (1995)
+Minor Jovians        Precessing ellipse        Jacobson (1994) 
+Outer Jovians        Numerical Integration     Jacobson (1991)
+
+Major Saturnians     Numerical Integration     Jacobson (1996a)
+Phoebe               Numerical Integration     Jacobson (1996c) 
+Inner Saturnians     Precessing ellipse        Jacobson (1995)
+Saturn co-orbiters   Numerical Integration     Jacobson (1995) 
+Saturn librators     Numerical Integration     Jacobson (1995) 
+
+Major Uranians       GUST (Analytic)           Laskar & Jacobson (1987)
+Minor Uranians       Precessing ellipse        Jacobson (1996b)
+
+Triton               Numerical Integration     Jacobson et al. (1991)
+Nereid               Numerical Integration     Jacobson et al. (1991)
+Inner Neptunians     Precessing ellipse        Owen et al. (1991)      
+
+Charon               Dynamic conic             Tholen (1990)        
+
+
+References For Natural Satellite Ephemerides:
+---------------------------------------------
+
+Jacobson, R.A., 1991.  Outer Jovian Satellite Ephemerides for the
+Galileo Project.  JPL Interoffice Memorandum 314.6-1261 (JPL internal
+document).
+
+Jacobson, R.A., 1994.  Revised Ephemerides for the Inner Jovian
+Satellites.  JPL Interoffice Memorandum 314.10-101 (JPL internal
+document).
+
+Jacobson, R.A., 1995.  The Orbits of the Minor Saturnian Satellites. 
+Bulletin, American Astronomical Society, vol. 27, No.3, p. 1202-1203.
+
+Jacobson, R.A., 1996a.  Update of the Major Saturnian Satellite
+Ephemerides.  JPL Interoffice Memorandum 312.1-96-012 (JPL internal
+document).
+
+Jacobson, R.A., 1996b.  Updated Ephemerides for the Minor Uranian
+Satellites.  JPL Interoffice Memorandum 312.1-96-014 (JPL internal
+document).
+
+Jacobson, R.A., 1996c.  Update of the Ephemeris for Phoebe.  JPL
+Interoffice Memorandum 312.1-96-024 (JPL internal document).
+
+Jacobson, R.A., Synnott, S.P., and Campbell, J.K., 1989.  The Orbits of
+the Satellites of Mars from Spacecraft and Earthbased Observations.
+Astronomy and Astrophysics, 225, 548.
+
+Jacobson, R.A., Riedel, J.E. and Taylor, A.H., 1991.  The Orbits of
+Triton and Nereid from Spacecraft and Earthbased Observations. 
+Astronomy and Astrophysics, 247, 565.
+
+Laskar, J. and Jacobson, R.A., 1987.  GUST86. An Analytic Ephemeris of
+the Uranian Satellites.  Astronomy and Astrophysics, 188, 212.
+
+Lieske, J.H., 1995.  Galilean Satellite Ephemerides E5.  JPL
+Engineering Memorandum 312-583 (JPL internal document).
+
+Owen, W.M., Vaughan, R.M., and Synnott, S.P., 1991.  Orbits of the 
+Six New Satellites of Neptune.  Astronomical Journal, 101, 1511.
+
+Tholen, D. and Buie, M.W., 1990. Further Analysis of Pluto-Charon Mutual
+Event Observations - 1990.  Bulletin, American Astronomical Society,
+vol. 22, No.3, p. 1129.
+
+
+
+Comets and Asteroids
+--------------------
+
+Sources of Orbital Elements for Comets and Asteroids
+
+1.  Minor Planet Circulars (MPC) published by the Minor Planet Center,
+    60 Garden St., Cambridge, Massachusetts 02138
+    http://cfa-www.harvard.edu/cfa/ps/mpc.html
+
+2.  The Lowell Observatory Database of Asteroid Orbits (E.L.G. Bowell)
+    http://www.lowell.edu
+
+3.  Solar System Dynamics Group/Jet Propulsion Laboratory (JPL)
+    D.K. Yeomans, Supervisor
+
+
+Cometary Magnitude Parameters
+
+1.  International Comet Quarterly (D.W.E. Green, editor), 60 Garden St.,
+    Cambridge, Massachusetts, 02138
+
+2.  Charles Morris, Jet Propulsion Laboratory, Pasadena, California  91109
+    http://encke.jpl.nasa.gov
+
+
+Asteroid Physical Parameters
+
+Radius and Albedo:
+
+1.  Tedesco, E.F. (1995)  "IMPS Diameters and Albedos V1.0"
+    Planetary Data System - Small Bodies Node (PDSSBN)
+    (M. A'Hearn, University of Maryland, College Park, Maryland)
+    http://pdssbn.astro.umd.edu
+
+2.  McFadden, L.A. et al. (1989)  In Asteroids II, p. 456.
+
+3.  Williams, J.G. (1990)  Private Communication.
+
+Taxonomic Type ("Spectral Type"):
+
+1.  Tholen, D.J. (1989)  "Asteroid Taxonomy V1.0"
+    Planetary Data System - Small Bodies Node (PDSSBN)
+    (M. A'Hearn, University of Maryland, College Park, Maryland)
+    http://pdssbn.astro.umd.edu
+
+2.  Binzel, R.P. and Xu, S. (1993)  Science 216:186-191.
+
+Rotation Period:
+
+1.  Harris, A.W. (1996)  "Asteroid Lightcurve Derived Data V2.0"
+    Planetary Data System - Small Bodies Node (PDSSBN)
+    (M. A'Hearn, University of Maryland, College Park, Maryland)
+    http://pdssbn.astro.umd.edu
+
+Magnitude Parameters:
+
+1.  Minor Planet Circulars (MPC) published by the Minor Planet Center,
+    60 Garden St., Cambridge, Massachusetts 02138
+    http://cfa-www.harvard.edu/cfa/ps/mpc.html
+
+
+Constants and Model References 
+------------------------------
+
+     Major body (planet/satellite) GM and AU definitions ACTUALLY USED (as 
+opposed to the FYI data screens) are from the DE-405 ephemeris, a major 
+improvement over the earlier DE-200.  Other planet and satellite constants 
+used by this software, such as radii, rotation and orientation, are based on 
+the following sources:
+
+         1.  `Report of the IAU/IAG Working Group on Cartographic 
+              Coordinates and Rotational Elements of the Planets and 
+              Satellites: 2000', Celestial Mechanics and Dynamical 
+              Astronomy 82: 83-110, 2002. 
+ 
+         2.  `The Astronomical Almanac', 1993.
+ 
+         3.  `Planetary Geodetic Control Using Satellite
+              Imaging', Journal of Geophysical Research, Vol. 84,
+              No. B3, March 10, 1979, by Thomas C. Duxbury.
+ 
+         4.   Letter from Thomas C. Duxbury to Dr. Ephraim
+              Lazeryevich Akim, Keldish Institute of Applied
+              Mathematics, USSR Academy of Sciences, Moscow, USSR.
+ 
+     Most values are from the `IAU/IAG Working Group on
+     Cartographic Coordinates and Rotational Elements of the
+     Planets and Satellites: 2000'.  The exceptions are:
+ 
+         --   Radii for the Sun are from the above reference [2].
+ 
+         --   The second nutation precession angle (M2) for Mars is
+              represented by a quadratic polynomial in the IAU2003 report. 
+              Current software cannot handle this term (which is extremely 
+              small), so the polynomial is truncated to a linear one.
+ 
+         --   The expressions for the pole and prime meridian of Neptune 
+              given in the IAU report include trigonometric terms which 
+              current software doesn't yet handle.  These terms are omitted.
+ 
+         --   For several satellites, the IAU2003 report either gives a 
+              single radius value or a polar radius and a single equatorial
+              radius.  Current software uses a triaxial ellipsoid model that 
+              requires three radii. In the cases listed below, additional 
+              values have been supplied in order to allow the software to 
+              function.   
+              
+              The affected satellites are:
+
+                 Body      NAIF ID code 
+                 ----      ------------
+                 Thebe     514
+                 Metis     516
+                 Helene    612
+                 Caliban   716      (no IAU value)
+                 Sycorax   717      (no IAU value)
+                 Larissa   807
+                 Vesta     20000004 (no IAU value)
+
+Airmass computation is based on:
+
+         5.  Kasten, F., Young, A., "Revised Optical Air Mass Tables and
+             Approximation Formula", Applied Optics, vol 28, no. 22, 
+             p. 4735-4738, Nov. 15, 1989.
+
+Refraction computation is based on [6-7]:
+
+         6.  Saemundsson, T., Sky & Telescope, July, 1986, p.70.
+         7.  Meeus, J., "Astronomical Algorithms", 1991, p. 101-102
+
+Constellation identification based on [8-9,(10-11)]:
+
+         8.  Roman, N.G. 1987, "Identification of a Constellation from a
+             Position", Publ. Astronomical Society of the Pacific, 99, 695-699
+         9.  Warren, Wayne H., Jr., (1997, GSFC) private communication.
+        10.  Delporte, E. 1930, "Delimitation Scientifique des Constellations",
+             Cambridge, Cambridge University Press.
+        11.  Gould, B.A., 1877, "Uranometria Argentina, mapas" (Buenos Aires,
+             Argentina: Observatorio Nacional)
+
+Long-term CT-UT offset calculations based on:
+        12.  priv. comm. Morrison (1980).
+        13.  Stephenson, F.R., Houlden, M.A., "Atlas of Historical Eclipse
+             Maps", Cambridge Univ. Press, p X, (1986).
+        14.  Stephenson, F.R, Morrison, L.V., "Long-term Changes in the
+             Rotation of the Earth: 700 B.C. to A.D. 1980", Phil. Trans. R. Soc.
+             London, 313, 47-70 (1984)
+        15.  Stephenson, F.R., Morrison, L.V., "Long-term Fluctuations in the
+             Earth's Rotation: 700 BC to AD 1990", Phil. Trans. R. Soc. London,
+             351, p. 165-202 (1995)
+
+Precession (IAU) from 1799-Jan-1 to 2202-Jan-1:
+        16.  Lieske, J., "Precession Matrix Based on IAU (1976) System of
+             Astronomical Constants", Astron. Astrophys. 73, 282-284, 1979.
+ 
+Precession (long-term) before 1799-Jan-1 and after 2202-Jan-1:
+        17.  Owen, William M., Jr., (JPL) "A Theory of the Earth's Precession 
+             Relative to the Invariable Plane of the Solar System", Ph.D.
+             Dissertation, University of Florida, 1990. 
+
+Nutation:
+        18.  Table 1,'Proposal to the IAU Working Group on Nutation', John M. 
+             Wahr and Martin L. Smith 1979. Adopted 1980.
+
+
+
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                ACKNOWLEDGEMENTS
+
+  This software reflects the underlying contributions of several people at JPL:
+ 
+        Design/implementation : Jon Giorgini 
+                                Don Yeomans
+    
+        Cognizant Eng.        : Jon Giorgini   
+
+        Ephemerides           : Myles Standish  (Planetary ephemerides)
+                                Bob Jacobson    (Satellites)
+                                Jay Lieske      (Satellites)
+
+        Contributors          : Paul Chodas     (some subroutines)
+                                Alan Chamberlin (web interface, database)
+                                The NAIF group (SPICELIB)
+                                 (esp. Chuck Acton, Bill Taber, Nat Bachman) 
+                                Ray Wimberly    (database maintenance)
+                                Mike Keesey     (comet orbits, database)
+
+    Address queries to "Jon.D.Giorgini@jpl.nasa.gov", who is solely responsible
+    for any errors or omissions. Solar System Dynamics Group, Jet Propulsion
+    Laboratory, 4800 Oak Grove Drive, Pasadena, CA 91109 USA.
+
+    The system described in this document was developed at the Jet Propulsion
+    Laboratory (Solar System Dynamics Group, Supervisor: D.K. Yeomans), 
+    California Institute of Technology, under contract with the National 
+    Aeronautics and Space Administration. 
+
+
+    The Horizons system may be formally referenced as:
+ 
+         Giorgini, J.D., Yeomans, D.K., Chamberlin, A.B., Chodas, P.W.,
+         Jacobson, R.A., Keesey, M.S., Lieske, J.H., Ostro, S.J.,
+         Standish, E.M., Wimberly, R.N., "JPL's On-Line Solar System Data
+         Service", Bulletin of the American Astronomical Society, Vol 28,
+         No. 3, p. 1158, 1996.

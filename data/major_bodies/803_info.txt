@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Apr 11, 2008              Naiad / (Neptune)                       803
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             =  29             Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.06 
+                                            V(1,0)              = +10.0
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 48.227(10^3)    Orbital period      = 0.294396 d
+  Eccentricity, e         = 0.0             Rotational period   = 
+  Inclination, i  (deg)   = 4.74
+*******************************************************************************

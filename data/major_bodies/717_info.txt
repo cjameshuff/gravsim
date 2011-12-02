@@ -1,0 +1,16 @@
+*******************************************************************************
+ Revised: Oct 22, 2010           Sycorax / (Uranus)                         717
+
+           http://ssd.jpl.nasa.gov/sat_props.html  (physical properties)
+           http://ssd.jpl.nasa.gov/sat_elem.html   (mean elements)
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)           = ~60               Density (g cm^-3)   =
+  Mass (10^20 kg )      =                   Geometric Albedo    =   0.07 
+                                            V(1,0)              =  
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 122 (10^5)      Orbital period      = 1290 days
+  Eccentricity, e         =   0.5           Rotational period   = 
+  Inclination, i  (deg)   =  97.8 (retro)
+*******************************************************************************

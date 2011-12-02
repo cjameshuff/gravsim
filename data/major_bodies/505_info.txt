@@ -1,0 +1,13 @@
+*******************************************************************************
+ Revised: Jan 08, 2004           Amalthea / (Jupiter)                       505
+
+ SATELLITE PHYSICAL PROPERTIES:
+  Radius (km)             = 131 x 73 x 67   Density (g cm^-3)   =              
+  Mass (10^20 kg )        =                 Geometric Albedo    =  0.06 
+                                            V(1,0)              = +7.4
+
+ SATELLITE ORBITAL DATA:
+  Semi-major axis, a (km) = 181.3 (10^3)    Orbital period      = 0.498179 d
+  Eccentricity, e         = 0.003           Rotational period   = Synchronous
+  Inclination, i  (deg)   = 0.40 
+*******************************************************************************
