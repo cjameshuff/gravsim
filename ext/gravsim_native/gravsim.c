@@ -22,6 +22,49 @@
 
 #include "gravsim.h"
 
+static inline void VMAddEqV(double vlhs[3], double vrhs[3], double scl) {
+    vlhs[0] += vrhs[0]*scl;
+    vlhs[1] += vrhs[1]*scl;
+    vlhs[2] += vrhs[2]*scl;
+}
+
+static inline void VAddEqV(double vlhs[3], double vrhs[3]) {
+    vlhs[0] += vrhs[0];
+    vlhs[1] += vrhs[1];
+    vlhs[2] += vrhs[2];
+}
+static inline void VAddEq3D(double v[3], double x, double y, double z) {
+    v[0] += x;
+    v[1] += y;
+    v[2] += z;
+}
+
+static inline void VMulEq1d(double v[3], double scl) {
+    v[0] *= scl;
+    v[1] *= scl;
+    v[2] *= scl;
+}
+static inline void VMulD(double v[3], double vlhs[3], double scl) {
+    v[0] = vlhs[0]*scl;
+    v[1] = vlhs[1]*scl;
+    v[2] = vlhs[2]*scl;
+}
+
+static inline void VSubV(double v[3], double vlhs[3], double vrhs[3]) {
+    v[0] = vlhs[0] - vrhs[0];
+    v[1] = vlhs[1] - vrhs[1];
+    v[2] = vlhs[2] - vrhs[2];
+}
+static inline void VSubEqV(double vlhs[3], double vrhs[3]) {
+    vlhs[0] -= vrhs[0];
+    vlhs[1] -= vrhs[1];
+    vlhs[2] -= vrhs[2];
+}
+static inline void VSubEq3D(double v[3], double x, double y, double z) {
+    v[0] -= x;
+    v[1] -= y;
+    v[2] -= z;
+}
 
 struct System * GRAVSIM_NewSystem(void)
 {
@@ -33,6 +76,10 @@ struct System * GRAVSIM_NewSystem(void)
     sys->maxparticles = 0;
     sys->nparticles = 0;
     sys->particles = NULL;
+    
+    sys->G = 6.673e-11; // m^3/kg/s^2
+    sys->sign = 1;
+    sys->sim_time = 0.0;
 }
 
 void GRAVSIM_FreeSystem(struct System * sys)
@@ -68,6 +115,13 @@ void GRAVSIM_CopyParticles(struct System * sysDst, struct System * sysSrc)
         sysDst->particles = (struct Body *)malloc(sizeof(struct Body)*sysSrc->nparticles);
     }
     memcpy(sysDst->particles, sysSrc->particles, sizeof(struct Body)*sysSrc->nparticles);
+}
+
+void GRAVSIM_CopyParameters(struct System * sysDst, struct System * sysSrc)
+{
+    sysDst->G = sysSrc->G;
+    sysDst->sign = sysSrc->sign;
+    sysDst->sim_time = sysSrc->sim_time;
 }
 
 body_id_t GRAVSIM_AddBody(struct System * sys, struct Body * body)
@@ -111,13 +165,23 @@ struct Body * GRAVSIM_GetParticle(struct System * sys, body_id_t pid)
     return sys->particles - pid;
 }
 
-// Compute gravitational *acceleration* at estimated system state (p)
-// This could be done faster, at the cost of more memory, by storing accumulated force on a
-// per-body basis. The same gravitational force applies to each body of a pair, in opposite
-// directions.
-// Could premultiply gm by G for gravitation-only simulations. This would then have to be
-// taken into account for additional forces...the benefit may be worthwhile.
-void GRAVSIM_CompGravAt(struct System * sys, double pt[3], double a[3], struct Body * ignoreBody)
+void GRAVSIM_Reverse(struct System * sys)
+{
+    struct Body * b;
+    struct Body * bend = sys->bodies + sys->nbodies;
+    struct Body * pend = sys->particles + sys->nparticles;
+    for(b = sys->bodies; b != bend; ++b) {
+        for(int j = 0; j < 3; ++j)
+            b->v[j] = -b->v[j];
+    }
+    for(b = sys->particles; b != pend; ++b) {
+        for(int j = 0; j < 3; ++j)
+            b->v[j] = -b->v[j];
+    }
+    sys->sign -= sys->sign;
+}
+
+/*void GRAVSIM_CompGravAt(struct System * sys, double pt[3], double a[3], struct Body * ignoreBody)
 {
     for(int j = 0; j < 3; ++j)
         a[j] = 0;
@@ -143,6 +207,7 @@ void GRAVSIM_CompGravAt(struct System * sys, double pt[3], double a[3], struct B
 }
 
 // Compute gravitation and gradient of the gravitation^2
+// Omit gravitation of ignoreBody if given.
 void GRAVSIM_CompGravGradAt(struct System * sys, double pt[3],
     double a[3], double g[3], struct Body * ignoreBody)
 {
@@ -175,6 +240,115 @@ void GRAVSIM_CompGravGradAt(struct System * sys, double pt[3],
         g[2] += d2*scl;
     }
     // printf("a = <%e, %e, %e>\n", a[0], a[1], a[2]);
+}*/
+
+// Compute gravitation and gradient of the gravitation^2, apply any other forces
+void GRAVSIM_ApplyForces(struct System * sys)
+{
+    const double G = sys->G;
+    struct Body * b0, * b1;
+    struct Body * bend = sys->bodies + sys->nbodies;
+    struct Body * pend = sys->particles + sys->nparticles;
+    for(b0 = sys->bodies; b0 != bend; ++b0) {
+        for(int j = 0; j < 3; ++j) {
+            b0->f[j] = 0;
+            b0->g[j] = 0;
+        }
+    }
+    for(b0 = sys->particles; b0 != pend; ++b0) {
+        for(int j = 0; j < 3; ++j) {
+            b0->f[j] = 0;
+            b0->g[j] = 0;
+        }
+    }
+    
+    double d[3], f[3];
+    for(b0 = sys->bodies; b0 != bend; ++b0)
+    for(b1 = b0; b1 != bend; ++b1)
+    {
+        if(b0 == b1)
+            continue;
+        
+        VSubV(d, b1->p, b0->p);
+        double r2 = (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+        double r = sqrt(r2);
+        VMulD(f, d, G*b0->mass*b1->mass/r2/r);
+        // printf("r = %f, b->gm %f\n", r, b->gm);
+        VAddEqV(b0->f, f);
+        VSubEqV(b1->f, f);
+    }
+    // printf("a = <%e, %e, %e>\n", a[0], a[1], a[2]);
+    
+    for(b0 = sys->bodies; b0 != bend; ++b0)
+    for(b1 = sys->particles; b1 != pend; ++b1)
+    {
+        if(b0 == b1)
+            continue;
+        
+        VSubV(d, b1->p, b0->p);
+        double r2 = (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+        double r = sqrt(r2);
+        VMulD(f, d, G*b0->mass*b1->mass/r2/r);
+        // printf("r = %f, b->gm %f\n", r, b->gm);
+        VSubEqV(b1->f, f);
+    }
+}
+void GRAVSIM_ApplyForces2(struct System * sys)
+{
+    const double G = sys->G;
+    struct Body * b0, * b1;
+    struct Body * bend = sys->bodies + sys->nbodies;
+    struct Body * pend = sys->particles + sys->nparticles;
+    for(b0 = sys->bodies; b0 != bend; ++b0) {
+        for(int j = 0; j < 3; ++j) {
+            b0->f[j] = 0;
+            b0->g[j] = 0;
+        }
+    }
+    for(b0 = sys->particles; b0 != pend; ++b0) {
+        for(int j = 0; j < 3; ++j) {
+            b0->f[j] = 0;
+            b0->g[j] = 0;
+        }
+    }
+    
+    double d[3], f[3];
+    for(b0 = sys->bodies; b0 != bend; ++b0)
+    for(b1 = b0; b1 != bend; ++b1)
+    {
+        if(b0 == b1)
+            continue;
+        
+        VSubV(d, b1->p, b0->p);
+        double r2 = (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+        double r = sqrt(r2);
+        VMulD(f, d, G*b0->mass*b1->mass/r2/r);
+        VAddEqV(b0->f, f);
+        VSubEqV(b1->f, f);
+        
+        // Calculate grad(|F|^2) = grad((b->gm/r2)^2)
+        VMulD(f, d, G*b0->mass*b1->mass*4.0/(r2*r2)/r);
+        VAddEqV(b0->g, f);
+        VSubEqV(b1->g, f);
+    }
+    // printf("a = <%e, %e, %e>\n", a[0], a[1], a[2]);
+    
+    for(b0 = sys->bodies; b0 != bend; ++b0)
+    for(b1 = sys->particles; b1 != pend; ++b1)
+    {
+        if(b0 == b1)
+            continue;
+        
+        VSubV(d, b1->p, b0->p);
+        double r2 = (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+        double r = sqrt(r2);
+        VMulD(f, d, G*b0->mass*b1->mass/r2/r);
+        VSubEqV(b1->f, f);
+        
+        // Calculate grad(|F|^2) = grad((b->gm/r2)^2)
+        VMulD(f, d, G*b0->mass*b1->mass*4.0/(r2*r2)/r);
+        VSubEqV(b1->g, f);
+    }
 }
 
 void GRAVSIM_Step(struct System * sys, double tstep)
@@ -206,71 +380,49 @@ void GRAVSIM_Step(struct System * sys, double tstep)
     
     // p1 = p0 + 1/6*e*v0
     // v1 = v0 + 3/8*e*F(p1)
-    for(b = sys->bodies; b != bend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_6*b->v[j];
-    }
-    for(b = sys->bodies; b != bend; ++b) {
-        GRAVSIM_CompGravAt(sys, b->p, a, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts3_8*a[j];
-    }
-    for(b = sys->particles; b != pend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_6*b->v[j];
-        
-        GRAVSIM_CompGravAt(sys, b->p, a, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts3_8*a[j];
-    }
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->p, b->v, ts_6);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->p, b->v, ts_6);
+    GRAVSIM_ApplyForces(sys);
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->v, b->f, ts3_8/b->mass);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->v, b->f, ts3_8/b->mass);
     
     // p2 = p1 + 1/3*e*v1
     // v2 = v1 + 1/4*e*(F(p2) + 1/48*e^2*grad(F(p2))^2)
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->p, b->v, ts_3);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->p, b->v, ts_3);
+    GRAVSIM_ApplyForces2(sys);
     for(b = sys->bodies; b != bend; ++b) {
         for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_3*b->v[j];
-    }
-    for(b = sys->bodies; b != bend; ++b) {
-        GRAVSIM_CompGravGradAt(sys, b->p, a, g, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts_4*(a[j] + tsts_48*g[j]);
+            b->v[j] += ts_4*(b->f[j] + tsts_48*b->g[j])/b->mass;
     }
     for(b = sys->particles; b != pend; ++b) {
         for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_3*b->v[j];
-        
-        GRAVSIM_CompGravGradAt(sys, b->p, a, g, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts_4*(a[j] + tsts_48*g[j]);
+            b->v[j] += ts_4*(b->f[j] + tsts_48*b->g[j])/b->mass;
     }
     
     // p3 = p2 + 1/3*e*v2
     // v3 = v2 + 3/8*e*F(p3)
-    for(b = sys->bodies; b != bend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_3*b->v[j];
-    }
-    for(b = sys->bodies; b != bend; ++b) {
-        GRAVSIM_CompGravAt(sys, b->p, a, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts3_8*a[j];
-    }
-    for(b = sys->particles; b != pend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_3*b->v[j];
-        
-        GRAVSIM_CompGravAt(sys, b->p, a, b);
-        for(int j = 0; j < 3; ++j)
-            b->v[j] += ts3_8*a[j];
-    }
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->p, b->v, ts_3);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->p, b->v, ts_3);
+    GRAVSIM_ApplyForces(sys);
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->v, b->f, ts3_8/b->mass);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->v, b->f, ts3_8/b->mass);
     
     // p4 = p3 + 1/6*e*v3
-    for(b = sys->bodies; b != bend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_6*b->v[j];
-    }
-    for(b = sys->particles; b != pend; ++b) {
-        for(int j = 0; j < 3; ++j)
-            b->p[j] += ts_6*b->v[j];
-    }
+    for(b = sys->bodies; b != bend; ++b)
+        VMAddEqV(b->p, b->v, ts_6);
+    for(b = sys->particles; b != pend; ++b)
+        VMAddEqV(b->p, b->v, ts_6);
+    
+    sys->sim_time += sys->sign*tstep;
 }

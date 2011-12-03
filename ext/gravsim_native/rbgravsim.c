@@ -2,9 +2,6 @@
 #include "ruby.h"
 #include "gravsim.h"
 
-// void GRAVSIM_CompGravAt(struct System * sys, double p0[3], double f[3], struct Body * ignoreBody);
-// void GRAVSIM_Step(struct System * sys, double tstep);
-
 static void gravsim_free(void * p) {GRAVSIM_FreeSystem(p);}
 
 static VALUE gravsim_initialize(VALUE self)
@@ -35,6 +32,15 @@ static VALUE gravsim_copy_particles_from(VALUE self, VALUE rhs)
     Data_Get_Struct(self, struct System, sysDst);
     Data_Get_Struct(rhs, struct System, sysSrc);
     GRAVSIM_CopyParticles(sysDst, sysSrc);
+    return self;
+}
+
+static VALUE gravsim_copy_parameters_from(VALUE self, VALUE rhs)
+{
+    struct System * sysDst, * sysSrc;
+    Data_Get_Struct(self, struct System, sysDst);
+    Data_Get_Struct(rhs, struct System, sysSrc);
+    GRAVSIM_CopyParameters(sysDst, sysSrc);
     return self;
 }
 
@@ -82,46 +88,46 @@ static VALUE gravsim_set_velocity(VALUE self, VALUE rb_body_id, VALUE rb_vel)
     return Qnil;
 }
 
-static VALUE gravsim_get_acceleration(VALUE self, VALUE rb_body_id)
+// static VALUE gravsim_get_acceleration(VALUE self, VALUE rb_body_id)
+// {
+//     struct System * sys;
+//     Data_Get_Struct(self, struct System, sys);
+//     struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
+//     VALUE rb_x = rb_float_new(body->a[0]);
+//     VALUE rb_y = rb_float_new(body->a[1]);
+//     VALUE rb_z = rb_float_new(body->a[2]);
+//     return rb_ary_new3(3, rb_x, rb_y, rb_z);
+// }
+// 
+// static VALUE gravsim_set_acceleration(VALUE self, VALUE rb_body_id, VALUE rb_accel)
+// {
+//     struct System * sys;
+//     Data_Get_Struct(self, struct System, sys);
+//     struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
+//     body->a[0] = NUM2DBL(rb_ary_entry(rb_accel, 0));
+//     body->a[1] = NUM2DBL(rb_ary_entry(rb_accel, 1));
+//     body->a[2] = NUM2DBL(rb_ary_entry(rb_accel, 2));
+//     return Qnil;
+// }
+
+static VALUE gravsim_get_mass(VALUE self, VALUE rb_body_id)
 {
     struct System * sys;
     Data_Get_Struct(self, struct System, sys);
     struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
-    VALUE rb_x = rb_float_new(body->a[0]);
-    VALUE rb_y = rb_float_new(body->a[1]);
-    VALUE rb_z = rb_float_new(body->a[2]);
-    return rb_ary_new3(3, rb_x, rb_y, rb_z);
+    return rb_float_new(body->mass);
 }
 
-static VALUE gravsim_set_acceleration(VALUE self, VALUE rb_body_id, VALUE rb_accel)
+static VALUE gravsim_set_mass(VALUE self, VALUE rb_body_id, VALUE rb_mass)
 {
     struct System * sys;
     Data_Get_Struct(self, struct System, sys);
     struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
-    body->a[0] = NUM2DBL(rb_ary_entry(rb_accel, 0));
-    body->a[1] = NUM2DBL(rb_ary_entry(rb_accel, 1));
-    body->a[2] = NUM2DBL(rb_ary_entry(rb_accel, 2));
+    body->mass = NUM2DBL(rb_mass);
     return Qnil;
 }
 
-static VALUE gravsim_get_gm(VALUE self, VALUE rb_body_id)
-{
-    struct System * sys;
-    Data_Get_Struct(self, struct System, sys);
-    struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
-    return rb_float_new(body->gm);
-}
-
-static VALUE gravsim_set_gm(VALUE self, VALUE rb_body_id, VALUE rb_gm)
-{
-    struct System * sys;
-    Data_Get_Struct(self, struct System, sys);
-    struct Body * body = GRAVSIM_GetBody(sys, NUM2LONG(rb_body_id));
-    body->gm = NUM2DBL(rb_gm);
-    return Qnil;
-}
-
-static VALUE gravsim_add_body(VALUE self, VALUE rb_pos, VALUE rb_vel, VALUE rb_gm)
+static VALUE gravsim_add_body(VALUE self, VALUE rb_pos, VALUE rb_vel, VALUE rb_mass)
 {
     struct System * sys;
     Data_Get_Struct(self, struct System, sys);
@@ -132,8 +138,7 @@ static VALUE gravsim_add_body(VALUE self, VALUE rb_pos, VALUE rb_vel, VALUE rb_g
     body.v[0] = NUM2DBL(rb_ary_entry(rb_vel, 0));
     body.v[1] = NUM2DBL(rb_ary_entry(rb_vel, 1));
     body.v[2] = NUM2DBL(rb_ary_entry(rb_vel, 2));
-    VSet(body.a, 0, 0, 0);
-    body.gm = NUM2DBL(rb_gm);
+    body.mass = NUM2DBL(rb_mass);
     VALUE rb_body_id = INT2FIX(GRAVSIM_AddBody(sys, &body));
     return rb_body_id;
 }
@@ -149,10 +154,24 @@ static VALUE gravsim_add_particle(VALUE self, VALUE rb_pos, VALUE rb_vel)
     body.v[0] = NUM2DBL(rb_ary_entry(rb_vel, 0));
     body.v[1] = NUM2DBL(rb_ary_entry(rb_vel, 1));
     body.v[2] = NUM2DBL(rb_ary_entry(rb_vel, 2));
-    VSet(body.a, 0, 0, 0);
-    body.gm = 0;
+    body.mass = 0;
     VALUE rb_body_id = GRAVSIM_AddParticle(sys, &body);
     return rb_body_id;
+}
+
+static VALUE gravsim_get_g(VALUE self)
+{
+    struct System * sys;
+    Data_Get_Struct(self, struct System, sys);
+    return rb_float_new(sys->G);
+}
+
+static VALUE gravsim_set_g(VALUE self, VALUE rb_g)
+{
+    struct System * sys;
+    Data_Get_Struct(self, struct System, sys);
+    sys->G = NUM2DBL(rb_g);
+    return Qnil;
 }
 
 static VALUE gravsim_run(VALUE self, VALUE rb_time, VALUE rb_max_tstep)
@@ -177,17 +196,21 @@ void Init_gravsim_native(void)
     rb_define_method(c_GravSim, "add_body", gravsim_add_body, 3);
     rb_define_method(c_GravSim, "add_particle", gravsim_add_particle, 2);
     
+    rb_define_method(c_GravSim, "g", gravsim_get_g, 0);
+    rb_define_method(c_GravSim, "g=", gravsim_set_g, 1);
+    
     rb_define_method(c_GravSim, "copy_bodies_from", gravsim_copy_bodies_from, 1);
     rb_define_method(c_GravSim, "copy_particles_from", gravsim_copy_particles_from, 1);
+    rb_define_method(c_GravSim, "copy_parameters_from", gravsim_copy_parameters_from, 1);
     
     rb_define_method(c_GravSim, "get_position", gravsim_get_position, 1);
     rb_define_method(c_GravSim, "set_position", gravsim_set_position, 2);
     rb_define_method(c_GravSim, "get_velocity", gravsim_get_velocity, 1);
     rb_define_method(c_GravSim, "set_velocity", gravsim_set_velocity, 2);
-    rb_define_method(c_GravSim, "get_acceleration", gravsim_get_acceleration, 1);
-    rb_define_method(c_GravSim, "set_acceleration", gravsim_set_acceleration, 2);
-    rb_define_method(c_GravSim, "get_gm", gravsim_get_gm, 1);
-    rb_define_method(c_GravSim, "set_gm", gravsim_set_gm, 2);
+    // rb_define_method(c_GravSim, "get_acceleration", gravsim_get_acceleration, 1);
+    // rb_define_method(c_GravSim, "set_acceleration", gravsim_set_acceleration, 2);
+    rb_define_method(c_GravSim, "get_mass", gravsim_get_mass, 1);
+    rb_define_method(c_GravSim, "set_mass", gravsim_set_mass, 2);
     
     rb_define_method(c_GravSim, "run", gravsim_run, 2);
 }

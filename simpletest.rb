@@ -89,46 +89,130 @@ end
 #     end
 # }
 
+$glcolors = {
+    red:   FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 0.0, 0.0, 1.0]),
+    green: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 1.0, 0.0, 1.0]),
+    blue:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 0.0, 1.0, 1.0]),
+    cyan:    FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 1.0, 1.0, 1.0]),
+    yellow:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 1.0, 0.0, 1.0]),
+    magenta: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 0.0, 1.0, 1.0]),
+    
+    dred:   FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 0.0, 0.0, 1.0]),
+    dgreen: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 0.5, 0.0, 1.0]),
+    dblue:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 0.0, 0.5, 1.0]),
+    dcyan:    FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 0.5, 0.5, 1.0]),
+    dyellow:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 0.5, 0.0, 1.0]),
+    dmagenta: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 0.0, 0.5, 1.0]),
+    
+    lred:   FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 0.5, 0.5, 1.0]),
+    lgreen: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 1.0, 0.5, 1.0]),
+    lblue:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 0.5, 1.0, 1.0]),
+    lcyan:    FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 1.0, 1.0, 1.0]),
+    lyellow:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 1.0, 0.5, 1.0]),
+    lmagenta: FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 0.5, 1.0, 1.0]),
+    
+    white:   FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [1.0, 1.0, 1.0, 1.0]),
+    gray50:  FFI::MemoryPointer.new(:float, 4).put_array_of_float(0, [0.5, 0.5, 0.5, 1.0])
+}
+
+
+class Tracker
+    SIZE_POINT = 3*FFI::type_size(:float)
+    def initialize(sim, body, max_points)
+        @sim = sim
+        @body = body
+        @scale = 1.0/(1.0*UNIT_AU)
+        @max_points = max_points
+        @interval = 1*UNIT_day
+        @last_update = 0
+        @last_eval = 0
+        @npoints = 0
+        @points = FFI::MemoryPointer.new(:float, 3*max_points)
+    end
+    
+    # discard every other point and double the interval to get a longer estimate
+    def stretch()
+        @npoints = @npoints/2
+        @npoints.times {|j|
+            pt = @points.get_array_of_float(j*2*SIZE_POINT, 3)
+            @points.put_array_of_float(j*SIZE_POINT, pt)
+        }
+        @interval = @interval*2
+    end
+    
+    def insert_pt()
+        if(@npoints < @max_points)
+            pt = @sim.get_position(@body).map{|x| x*@scale}
+            @points.put_array_of_float(@npoints*SIZE_POINT, pt)
+            @npoints += 1
+        else
+            stretch()
+        end
+    end
+    
+    def evaluate()
+        # Re-estimate period, determine primary and orbital parameters, etc
+        
+    end
+    
+    def update(time)
+        if(time > @last_update + @interval)
+            insert_pt()
+            @last_update = time
+            @last_eval = time
+        end
+        
+        if(time > @last_eval + @max_points*@interval)
+            evaluate()
+        end
+    end
+    
+    def draw()
+        glColor3fv($glcolors[:dgreen])
+        glBegin(GL_LINE_STRIP)
+        @npoints.times {|j|
+            glVertex3f(*@points.get_array_of_float(j*SIZE_POINT, 3))
+        }
+        glEnd()
+        # glEnableClientState(GL_VERTEX_ARRAY)
+        # glVertexPointer(3, GL_FLOAT, 0, @points)
+        # glDrawArrays(GL_LINE_STRIP, 0, @npoints)
+        # glDisableClientState(GL_VERTEX_ARRAY)
+    end
+end
+
 
 class GravSimWindow
     include FFI, GL, GLU, GLUT, Math
     POS = MemoryPointer.new(:float, 4).put_array_of_float(0, [5.0, 5.0, 10.0, 0.0])
-    RED = MemoryPointer.new(:float, 4).put_array_of_float(0, [0.8, 0.1, 0.0, 1.0])
-    GREEN = MemoryPointer.new(:float, 4).put_array_of_float(0, [0.0, 0.8, 0.2, 1.0])
-    BLUE = MemoryPointer.new(:float, 4).put_array_of_float(0, [0.2, 0.2, 1.0, 1.0])
     
     include Math
     def draw
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        @scale = 1.0/(1.0*UNIT_AU)
         
         glPushMatrix()
         glRotatef(@view_rotx, 1.0, 0.0, 0.0)
         glRotatef(@view_roty, 0.0, 1.0, 0.0)
         glRotatef(@view_rotz, 0.0, 0.0, 1.0)
         
-        glColor3fv(RED)
+        glColor3fv($glcolors[:red])
         glBegin(GL_LINE_STRIP)
             glVertex3f(0, 0, 0)
             glVertex3f(1, 0, 0)
         glEnd()
-        glColor3fv(GREEN)
+        glColor3fv($glcolors[:green])
         glBegin(GL_LINE_STRIP)
             glVertex3f(0, 0, 0)
             glVertex3f(0, 1, 0)
         glEnd()
-        glColor3fv(BLUE)
+        glColor3fv($glcolors[:blue])
         glBegin(GL_LINE_STRIP)
             glVertex3f(0, 0, 0)
             glVertex3f(0, 0, 1)
         glEnd()
-        glColor3fv(GREEN)
-        @tracks.each {|sim_id, track|
-            glBegin(GL_LINE_STRIP)
-            track.each {|pt| glVertex3f(pt[0]*@scale, pt[1]*@scale, pt[2]*@scale)}
-            glEnd()
-        }
+        glColor3fv($glcolors[:dgreen])
+        @tracks.each {|sim_id, track| track.draw()}
         
         glPopMatrix()
         glutSwapBuffers()
@@ -194,7 +278,8 @@ class GravSimWindow
     def idle
         t = glutGet(GLUT_ELAPSED_TIME)/1000.0
         @sim.run(1.0*UNIT_day, 1.0*UNIT_hour)
-        @sim_ids.values.each {|id| @tracks[id].push(@sim.get_position(id))}
+        @sim_time += 1.0*UNIT_day
+        @sim_ids.values.each {|id| @tracks[id].update(@sim_time)}
         @frame += 1
         $stdout.write "#{@frame}\r"
         glutPostRedisplay()
@@ -221,6 +306,7 @@ class GravSimWindow
         glutCreateWindow('GravSim')
         @view_rotx, @view_roty, @view_rotz = 20.0, 30.0, 0.0
         
+        @sim_time = 0
         @frame = 0
         @paused = false
         
@@ -233,15 +319,12 @@ class GravSimWindow
         
         body_ids.each {|jpl_id|
             body = load_majorbody_ephemeris(jpl_id)
-            @sim_ids[jpl_id] = @sim.add_body(body[:position], body[:velocity], body[:mass]*G)
-            @tracks[@sim_ids[jpl_id]] = []
+            sim_id = @sim.add_body(body[:position], body[:velocity], body[:mass])
+            @sim_ids[jpl_id] = sim_id
+            @tracks[sim_id] = Tracker.new(@sim, sim_id, 360)
         }
         # @sim.add_particle(rb_pos, rb_vel, rb_mass)
         puts "sim_ids: #{@sim_ids}"
-        # @sim.run(1.0*UNIT_day, 1.0*UNIT_hour)
-        # @sim_ids.values.each {|id| @tracks[id].push(@sim.get_position(id))}
-        # @sim_ids.values.each {|id| @tracks[id].push(@sim.get_position(id))}
-        # pp @tracks
         
         # glLightfv(GL_LIGHT0, GL_POSITION, POS)
         # glEnable(GL_CULL_FACE)
